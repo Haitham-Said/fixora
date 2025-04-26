@@ -1,0 +1,4 @@
+jwt:
+  config:
+    secret: YourSuperSecretLongBase64EncodedString
+    expirationMs: 86400000
