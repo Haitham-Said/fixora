@@ -29,9 +29,10 @@ public class JWTUtil {
         this.key= Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtConfiguration.secret()));
     }
 
-    public String generateToken(Map<String,Object> claims){
+    public String generateToken(String subject,Map<String,Object> claims){
        return Jwts.builder()
                 .setClaims(claims)
+                .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+jwtConfiguration.expirationMs()))
                 .signWith(key,SignatureAlgorithm.HS256)

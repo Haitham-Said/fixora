@@ -1,4 +1,6 @@
 package com.fixora.security.inbound.model;
 
-public class AuthenticationResponse {
+
+public record AuthenticationResponse(String token) {
+
 }

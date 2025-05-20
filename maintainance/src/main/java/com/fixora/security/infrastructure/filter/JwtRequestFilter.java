@@ -1,5 +1,6 @@
 package com.fixora.security.infrastructure.filter;
 
+import com.fixora.security.application.model.UserInfo;
 import com.fixora.security.infrastructure.util.JWTUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -32,9 +33,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(authorization!=null&&authorization.startsWith("Bearer ")){
             String token=authorization.substring(7);
             Claims claims=jwtUtil.getClaims(token);
-            String username=claims.getSubject();
             List<GrantedAuthority> authorities=Collections.singletonList(new SimpleGrantedAuthority((String)claims.get("role")));
-            UsernamePasswordAuthenticationToken auth=new UsernamePasswordAuthenticationToken(username,null,authorities);
+            UserInfo userInfo=new UserInfo((Long)claims.get("userId"),(String)claims.get("userEmail"),(String)claims.get("role"));
+            UsernamePasswordAuthenticationToken auth=new UsernamePasswordAuthenticationToken(userInfo,null,authorities);
+
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(request,response);

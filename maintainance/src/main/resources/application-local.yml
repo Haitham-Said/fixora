@@ -1,4 +1,20 @@
 jwt:
   config:
-    secret: YourSuperSecretLongBase64EncodedString
+    secret: LWJ1FUzrA4cpm7U6XLXtRgR5RVxg7mHtQwNzdUFetAY=
     expirationMs: 86400000
+
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/maintainance-db"
+    username: postgres
+    password: 0163625818aA@
+    driver: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # or validate, none, create-drop (depending on your use case)
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect

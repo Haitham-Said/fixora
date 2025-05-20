@@ -1,4 +1,3 @@
 package com.fixora.security.inbound.model;
 
-public class AuthenticationRequest {
-}
+public record AuthenticationRequest(String userName,String password){ }
