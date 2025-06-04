@@ -12,7 +12,7 @@ public class TicketMapper {
     public TicketQuery toDomain(TicketQueryRequest ticketQueryRequest, UserInfo userInfo, Pageable pageable) {
         return TicketQuery.builder().
                 userId(userInfo.userId())
-                .filters(ticketQueryRequest.filters())
+                .filter(ticketQueryRequest.filters())
                 .requestId(ticketQueryRequest.requestId())
                 .pageable(pageable)
                 .build();

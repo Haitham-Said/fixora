@@ -6,6 +6,7 @@ public enum TicketStatus {
     ASSIGNED,
     COMPLETED,
     CANCELLED,
-    CLOSED
+    CLOSED,
+    ALL
 
 }

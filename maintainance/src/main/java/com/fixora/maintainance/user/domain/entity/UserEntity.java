@@ -4,6 +4,8 @@ import com.fixora.maintainance.user.domain.model.Role;
 import com.fixora.maintainance.user.domain.model.UserStatus;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "USERS")
 public class UserEntity {
@@ -32,6 +34,12 @@ public class UserEntity {
     @Column(name = "status")
     private UserStatus status=UserStatus.ACTIVE;
 
+    @Column(name="created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name="company_id")
+    private Integer companyId;
+
     protected UserEntity() {
         // JPA needs empty constructor
     }
@@ -40,6 +48,10 @@ public class UserEntity {
         this.email = email;
         this.password = passwordHash;
         this.role = role;
+    }
+
+    public Integer getCompanyId() {
+        return companyId;
     }
 
     public Long getId() {
@@ -64,6 +76,10 @@ public class UserEntity {
 
     public Role getRole() {
         return role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public UserStatus getStatus() {

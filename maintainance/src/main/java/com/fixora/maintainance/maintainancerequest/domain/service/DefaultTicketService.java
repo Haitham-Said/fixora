@@ -2,22 +2,19 @@ package com.fixora.maintainance.maintainancerequest.domain.service;
 
 import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
 import com.fixora.maintainance.maintainancerequest.domain.model.TicketQuery;
-import com.fixora.maintainance.maintainancerequest.domain.repository.TicketRepository;
+import com.fixora.maintainance.maintainancerequest.domain.repository.ITicketRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class DefaultTicketService implements TicketService{
 
-    private final TicketRepository ticketRepository;
+    private final ITicketRepository ticketRepository;
 
-    public DefaultTicketService(TicketRepository ticketRepository) {
+    public DefaultTicketService(ITicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
     }
 
-    public Page<Ticket> loadTickets(TicketQuery ticketQuery){
-        return ticketRepository.loadTickets(ticketQuery);
-    }
+    public Page<Ticket> loadCustomerTickets(TicketQuery ticketQuery){
+        ticketRepository.loadCustomerTickets(ticketQuery);
 }

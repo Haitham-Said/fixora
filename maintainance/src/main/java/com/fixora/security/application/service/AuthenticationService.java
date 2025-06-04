@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+
 
 @Service
 public class AuthenticationService {
@@ -41,6 +41,7 @@ public class AuthenticationService {
         claims.put("userId", user.getId());
         claims.put("userEmail",user.getEmail());
         claims.put("role", user.getRole());
+        claims.put("companyId",user.getCompanyId());
         return claims;
     }
 }

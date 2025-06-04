@@ -6,5 +6,7 @@ import org.springframework.data.domain.Page;
 
 public interface TicketService {
 
-    Page<Ticket> loadTickets(TicketQuery ticketQuery);
+    Page<Ticket> loadCustomerTickets(TicketQuery ticketQuery);
+//    Page<Ticket> loadMaintenanceTickets(TicketQuery ticketQuery);
+//    Page<Ticket> loadPortalTickets(TicketQuery ticketQuery);
 }

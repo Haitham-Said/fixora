@@ -1,5 +1,5 @@
 package com.fixora.security.application.model;
 
-public record UserInfo(Long userId,String userEmail, String role){}
+public record UserInfo(Long userId,String userEmail, String role,Integer companyId){}
 
 

@@ -5,8 +5,8 @@ import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
 import com.fixora.maintainance.maintainancerequest.domain.model.TicketQuery;
 import org.springframework.data.domain.Page;
 
-public interface TicketRepository {
+public interface ITicketRepository {
 
-     Page<Ticket> loadTickets(TicketQuery ticketQuery);
+     Page<Ticket> loadCustomerTickets(TicketQuery ticketQuery);
 
 }
