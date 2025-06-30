@@ -2,9 +2,8 @@ package com.fixora.maintainance.maintainancerequest.inbound.controller;
 
 import com.fixora.maintainance.maintainancerequest.application.service.CustomerApplicationService;
 import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
-import com.fixora.maintainance.maintainancerequest.inbound.model.TicketFilter;
 import com.fixora.maintainance.maintainancerequest.inbound.model.TicketQueryRequest;
-import com.fixora.maintainance.maintainancerequest.inbound.model.TicketStatus;
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import com.fixora.security.application.model.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,7 @@ public class CustomerTicketController {
     @Autowired
     private CustomerApplicationService customerApplicationService;
     private final Logger logger= LoggerFactory.getLogger(CustomerTicketController.class);
+
     @GetMapping()
     public Page<Ticket> getTickets(@AuthenticationPrincipal UserInfo userInfo,
                                    @RequestParam("status") String status,
@@ -39,8 +39,8 @@ public class CustomerTicketController {
 
         UUID requestId=UUID.randomUUID();
         logger.info("ticket query request received | userId :: {} , requestId :: {}",userInfo.userId(),requestId);
-        TicketFilter ticketFilter=new TicketFilter(TicketStatus.valueOf(status),dateFrom,dateTo,userInfo.companyId(),userInfo.role());
-        TicketQueryRequest ticketQueryRequest=new TicketQueryRequest(requestId,ticketFilter);
+
+        TicketQueryRequest ticketQueryRequest=new TicketQueryRequest(requestId,TicketStatus.valueOf(status),dateFrom,dateTo,userInfo.companyId(),userInfo.role());
 
         return customerApplicationService.loadTickets(ticketQueryRequest,userInfo,pageable);
 

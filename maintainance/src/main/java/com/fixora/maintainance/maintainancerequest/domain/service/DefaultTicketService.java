@@ -15,6 +15,7 @@ public class DefaultTicketService implements TicketService{
         this.ticketRepository = ticketRepository;
     }
 
-    public Page<Ticket> loadCustomerTickets(TicketQuery ticketQuery){
-        ticketRepository.loadCustomerTickets(ticketQuery);
+    public Page<Ticket> loadCustomerTickets(TicketQuery ticketQuery) {
+        return ticketRepository.loadCustomerTickets(ticketQuery);
+    }
 }

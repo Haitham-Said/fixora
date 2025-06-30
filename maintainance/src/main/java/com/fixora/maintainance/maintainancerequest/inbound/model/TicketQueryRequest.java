@@ -1,8 +1,18 @@
 package com.fixora.maintainance.maintainancerequest.inbound.model;
 
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
+
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record TicketQueryRequest(
      UUID requestId,
-     TicketFilter filters
+     TicketStatus ticketStatus,
+     LocalDate dateFrom,
+     LocalDate dateTo,
+     Integer companyId,
+     String role
+
+
+
 ){}

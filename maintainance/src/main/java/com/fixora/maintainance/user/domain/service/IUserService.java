@@ -1,10 +1,8 @@
 package com.fixora.maintainance.user.domain.service;
 
-import com.fixora.maintainance.user.domain.entity.UserEntity;
-
-import java.util.Optional;
+import com.fixora.maintainance.user.infrastructure.entity.User;
 
 public interface IUserService {
 
-    public UserEntity findUserByEmail(String userName);
+    public User findUserByEmail(String userName);
 }

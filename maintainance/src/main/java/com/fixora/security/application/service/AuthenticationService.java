@@ -1,7 +1,7 @@
 package com.fixora.security.application.service;
 
 
-import com.fixora.maintainance.user.domain.entity.UserEntity;
+import com.fixora.maintainance.user.infrastructure.entity.User;
 import com.fixora.maintainance.user.domain.exception.InvalidCredentialException;
 import com.fixora.maintainance.user.domain.service.UserService;
 import com.fixora.security.inbound.model.AuthenticationRequest;
@@ -28,7 +28,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticateUser(AuthenticationRequest loginRequest) {
-        UserEntity user = userService.findUserByEmail(loginRequest.userName());
+        User user = userService.findUserByEmail(loginRequest.userName());
         if(!passwordEncoder.matches(loginRequest.password(),user.getPassword())){
             throw new InvalidCredentialException("Invalid Credentials");
         }
@@ -36,7 +36,7 @@ public class AuthenticationService {
         return new AuthenticationResponse(token);
     }
 
-    public Map<String, Object> buildClaims(UserEntity user) {
+    public Map<String, Object> buildClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         claims.put("userEmail",user.getEmail());

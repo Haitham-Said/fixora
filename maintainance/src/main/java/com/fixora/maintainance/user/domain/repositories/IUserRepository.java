@@ -1,10 +1,10 @@
 package com.fixora.maintainance.user.domain.repositories;
 
-import com.fixora.maintainance.user.domain.entity.UserEntity;
+import com.fixora.maintainance.user.infrastructure.entity.User;
 
 import java.util.Optional;
 
 public interface IUserRepository {
 
-    Optional<UserEntity> findUserByUsername(String userName);
+    Optional<User> findUserByUsername(String userName);
 }

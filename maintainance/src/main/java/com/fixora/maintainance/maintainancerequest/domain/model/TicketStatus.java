@@ -1,4 +1,4 @@
-package com.fixora.maintainance.maintainancerequest.inbound.model;
+package com.fixora.maintainance.maintainancerequest.domain.model;
 
 public enum TicketStatus {
     PENDING,
