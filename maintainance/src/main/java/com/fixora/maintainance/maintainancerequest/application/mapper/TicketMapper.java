@@ -1,7 +1,7 @@
 package com.fixora.maintainance.maintainancerequest.application.mapper;
 
-import com.fixora.maintainance.maintainancerequest.domain.model.TicketQuery;
-import com.fixora.maintainance.maintainancerequest.domain.model.TicketFilter;
+import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketQuery;
+import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketFilter;
 import com.fixora.maintainance.maintainancerequest.inbound.model.TicketQueryRequest;
 import com.fixora.security.application.model.UserInfo;
 import org.springframework.data.domain.Pageable;

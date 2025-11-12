@@ -65,6 +65,28 @@
 			<version>1.18.30</version> <!-- Use latest compatible version -->
 			<scope>provided</scope>
 		</dependency>
+
+			<!-- Apache POI Core -->
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>5.2.3</version>
+			</dependency>
+
+			<!-- Apache POI OOXML for .xlsx support -->
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>5.2.3</version>
+			</dependency>
+
+
+		<!-- Optional: Apache Commons for better handling -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>

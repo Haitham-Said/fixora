@@ -1,12 +1,14 @@
-package com.fixora.maintainance.maintainancerequest.domain.model;
+package com.fixora.maintainance.user.domain.model;
 
 
-import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
+@Builder
+
 public class Maintainer {
 
     private User user;

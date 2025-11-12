@@ -1,7 +1,7 @@
 package com.fixora.security.application.service;
 
 
-import com.fixora.maintainance.user.infrastructure.entity.User;
+import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 import com.fixora.maintainance.user.domain.exception.InvalidCredentialException;
 import com.fixora.maintainance.user.domain.service.UserService;
 import com.fixora.security.inbound.model.AuthenticationRequest;
@@ -28,20 +28,21 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticateUser(AuthenticationRequest loginRequest) {
-        User user = userService.findUserByEmail(loginRequest.userName());
-        if(!passwordEncoder.matches(loginRequest.password(),user.getPassword())){
+        UserEntity userEntity = userService.findUserByEmail(loginRequest.userName());
+        if(!passwordEncoder.matches(loginRequest.password(), userEntity.getPasswordHash())){
             throw new InvalidCredentialException("Invalid Credentials");
         }
-        String token = jwtUtil.generateToken(user.getEmail(),buildClaims(user));
+        String token = jwtUtil.generateToken(userEntity.getEmail(),buildClaims(userEntity));
         return new AuthenticationResponse(token);
     }
 
-    public Map<String, Object> buildClaims(User user) {
+    public Map<String, Object> buildClaims(UserEntity userEntity) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId());
-        claims.put("userEmail",user.getEmail());
-        claims.put("role", user.getRole());
-        claims.put("companyId",user.getCompanyId());
+        claims.put("userId", (Long) userEntity.getId());
+        claims.put("userEmail", userEntity.getEmail());
+        claims.put("role", userEntity.getRole());
+        if(userEntity.getCompany()!=null)
+            claims.put("companyId",(Long) userEntity.getCompany().getId());
         return claims;
     }
 }

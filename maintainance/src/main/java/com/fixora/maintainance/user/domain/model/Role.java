@@ -4,5 +4,6 @@ public enum Role {
     CUSTOMER,
     MAINTAINER,
     EMPLOYEE,
-    ADMIN
+    ADMIN,
+    OPERATION
 }

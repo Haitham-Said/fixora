@@ -1,4 +1,4 @@
-package com.fixora.maintainance.maintainancerequest.domain.model;
+package com.fixora.maintainance.user.domain.model;
 
 
 import lombok.Data;
@@ -12,11 +12,10 @@ public class User {
 
     private String name;
 
-
     private String email;
 
-
     private String phone;
+
 
 }
 

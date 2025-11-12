@@ -10,7 +10,7 @@ public record TicketQueryRequest(
      TicketStatus ticketStatus,
      LocalDate dateFrom,
      LocalDate dateTo,
-     Integer companyId,
+     Long companyId,
      String role
 
 

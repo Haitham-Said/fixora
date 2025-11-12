@@ -1,13 +1,13 @@
 package com.fixora.maintainance.user.infrastructure.entity.maintainer;
 
-import com.fixora.maintainance.user.infrastructure.entity.User;
+import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "maintainers")
-public class Maintainer {
+public class MaintainerEntity {
     @Id
     @Column(name = "user_id")
     private Long userId;
@@ -15,7 +15,7 @@ public class Maintainer {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity userEntity;
 
     private BigDecimal rate;
     private Boolean availability;
@@ -29,8 +29,8 @@ public class Maintainer {
         return userId;
     }
 
-    public User getUser() {
-        return user;
+    public UserEntity getUser() {
+        return userEntity;
     }
 
     public BigDecimal getRate() {
@@ -51,5 +51,33 @@ public class Maintainer {
 
     public String getProfileStatus() {
         return profileStatus;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
+
+    public void setAvailability(Boolean availability) {
+        this.availability = availability;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setProfileStatus(String profileStatus) {
+        this.profileStatus = profileStatus;
     }
 }

@@ -3,8 +3,8 @@ package com.fixora.maintainance.maintainancerequest.infrastructure.persistence.e
 
 import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import com.fixora.maintainance.user.infrastructure.entity.customer.Customer;
-import com.fixora.maintainance.user.infrastructure.entity.maintainer.Maintainer;
-import com.fixora.maintainance.user.infrastructure.entity.maintainer.Skillset;
+import com.fixora.maintainance.user.infrastructure.entity.maintainer.MaintainerEntity;
+
 import com.fixora.maintainance.user.infrastructure.entity.shared.Apartment;
 import com.fixora.maintainance.user.infrastructure.entity.shared.Building;
 import com.fixora.maintainance.user.infrastructure.entity.shared.Company;
@@ -38,21 +38,21 @@ public class MaintainanceRequest {
     private String pictureUrl;
 
     @Column(name = "preferred_time")
-    private LocalDateTime preferredTime;
+    private String preferredTime;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "skillset_id")
-    private Skillset skillset;
+//    @ManyToOne
+//    @JoinColumn(name = "skillset_id") // tobe added later
+//    private Skillset skillset;
 
     @Enumerated(EnumType.STRING)
     private TicketStatus status = TicketStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "maintainer_id")
-    private Maintainer maintainer;
+    private MaintainerEntity maintainerEntity;
 
     @Column(name = "customer_rate")
     private Integer customerRate;
@@ -85,24 +85,18 @@ public class MaintainanceRequest {
         return pictureUrl;
     }
 
-    public LocalDateTime getPreferredTime() {
-        return preferredTime;
-    }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 
-    public Skillset getSkillset() {
-        return skillset;
-    }
+//    public Skillset getSkillset() {
+//        return skillset;
+//    }
 
     public TicketStatus getStatus() {
         return status;
     }
 
-    public Maintainer getMaintainer() {
-        return maintainer;
+    public MaintainerEntity getMaintainer() {
+        return maintainerEntity;
     }
 
     public Integer getCustomerRate() {
@@ -111,5 +105,65 @@ public class MaintainanceRequest {
 
     public Company getCompany() {
         return company;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public void setApartment(Apartment apartment) {
+        this.apartment = apartment;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
+
+    public String getPreferredTime() {
+        return preferredTime;
+    }
+
+    public void setPreferredTime(String preferredTime) {
+        this.preferredTime = preferredTime;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    //    public void setSkillset(Skillset skillset) {
+//        this.skillset = skillset;
+//    }
+
+    public void setStatus(TicketStatus status) {
+        this.status = status;
+    }
+
+    public void setMaintainer(MaintainerEntity maintainerEntity) {
+        this.maintainerEntity = maintainerEntity;
+    }
+
+    public void setCustomerRate(Integer customerRate) {
+        this.customerRate = customerRate;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }

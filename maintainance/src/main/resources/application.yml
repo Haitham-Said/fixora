@@ -3,13 +3,17 @@ jwt:
     secret: LWJ1FUzrA4cpm7U6XLXtRgR5RVxg7mHtQwNzdUFetAY=
     expirationMs: 86400000
 
+
 spring:
   datasource:
     url: "jdbc:postgresql://localhost:5432/maintainance-db"
     username: postgres
     password: 0163625818aA@
     driver: org.postgres.Driver
-
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   jpa:
     hibernate:
       ddl-auto: update  # or validate, none, create-drop (depending on your use case)

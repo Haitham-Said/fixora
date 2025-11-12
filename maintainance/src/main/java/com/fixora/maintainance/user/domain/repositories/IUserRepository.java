@@ -1,10 +1,22 @@
 package com.fixora.maintainance.user.domain.repositories;
 
-import com.fixora.maintainance.user.infrastructure.entity.User;
+import com.fixora.maintainance.user.domain.model.Maintainer;
+import com.fixora.maintainance.user.domain.model.request.MaintainerRequest;
+import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IUserRepository {
 
-    Optional<User> findUserByUsername(String userName);
+    Optional<UserEntity> findUserByUsername(String userName);
+
+
+    List<Maintainer> findAvailableMaintainersForSlotAndCompany(String preferredSlot,Long id);
+
+     com.fixora.maintainance.user.domain.model.User addUser(MaintainerRequest maintainerRequest);
+
+
+
+
 }

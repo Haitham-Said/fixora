@@ -10,19 +10,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomerApplicationService {
-
+public class PortalTicketApplicationService {
     private final TicketService ticketService;
     private final TicketMapper ticketMapper;
 
-    public CustomerApplicationService(TicketService ticketService, TicketMapper ticketMapper) {
+    public PortalTicketApplicationService(TicketService ticketService, TicketMapper ticketMapper) {
         this.ticketService = ticketService;
         this.ticketMapper = ticketMapper;
     }
-
     public Page<Ticket> loadTickets(TicketQueryRequest ticketQueryRequest, UserInfo userInfo, Pageable pageable){
 
-        return ticketService.loadCustomerTickets(ticketMapper.toDomain(ticketQueryRequest,userInfo,pageable));
+        return ticketService.loadTickets(ticketMapper.toDomain(ticketQueryRequest,userInfo,pageable));
     }
-
 }

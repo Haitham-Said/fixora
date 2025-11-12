@@ -1,6 +1,6 @@
 package com.fixora.maintainance.user.infrastructure.entity.customer;
 
-import com.fixora.maintainance.user.infrastructure.entity.User;
+import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 import com.fixora.maintainance.user.infrastructure.entity.shared.Apartment;
 import jakarta.persistence.*;
 
@@ -16,7 +16,7 @@ public class Customer {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity userEntity;
 
     @ManyToOne
     @JoinColumn(name = "apartment_id")
@@ -29,8 +29,8 @@ public class Customer {
         return userId;
     }
 
-    public User getUser() {
-        return user;
+    public UserEntity getUser() {
+        return userEntity;
     }
 
     public Apartment getApartment() {

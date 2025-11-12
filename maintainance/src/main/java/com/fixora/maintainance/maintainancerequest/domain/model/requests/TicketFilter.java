@@ -1,5 +1,6 @@
-package com.fixora.maintainance.maintainancerequest.domain.model;
+package com.fixora.maintainance.maintainancerequest.domain.model.requests;
 
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ public class TicketFilter {
     private TicketStatus ticketStatus;
     private LocalDate dateFrom;
     private LocalDate dateTo;
-    private Integer companyId;
+    private Long companyId;
     private String role;
 
 }

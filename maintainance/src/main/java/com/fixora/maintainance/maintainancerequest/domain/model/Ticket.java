@@ -4,6 +4,8 @@ package com.fixora.maintainance.maintainancerequest.domain.model;
 
 
 
+import com.fixora.maintainance.user.domain.model.Customer;
+import com.fixora.maintainance.user.domain.model.Maintainer;
 import lombok.Builder;
 import lombok.Data;
 
@@ -29,7 +31,7 @@ public class Ticket {
     private String pictureUrl;
 
 
-    private LocalDateTime preferredTime;
+    private String preferredTime;
 
 
     private LocalDateTime createdAt ;
@@ -41,6 +43,7 @@ public class Ticket {
 
 
     private Integer customerRate;
+
 
 
 

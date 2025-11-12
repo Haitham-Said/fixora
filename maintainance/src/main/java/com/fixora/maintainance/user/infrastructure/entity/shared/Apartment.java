@@ -34,4 +34,16 @@ public class Apartment {
     public Integer getFloorNumber() {
         return floorNumber;
     }
+
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
+
+    public void setApartmentNumber(String apartmentNumber) {
+        this.apartmentNumber = apartmentNumber;
+    }
+
+    public void setFloorNumber(Integer floorNumber) {
+        this.floorNumber = floorNumber;
+    }
 }

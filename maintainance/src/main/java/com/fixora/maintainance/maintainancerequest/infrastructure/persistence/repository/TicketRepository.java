@@ -1,9 +1,16 @@
 package com.fixora.maintainance.maintainancerequest.infrastructure.persistence.repository;
 
-import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
-import com.fixora.maintainance.maintainancerequest.domain.model.TicketQuery;
+import com.fixora.maintainance.maintainancerequest.domain.model.*;
+import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketQuery;
+import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketRequest;
 import com.fixora.maintainance.maintainancerequest.domain.repository.ITicketRepository;
+import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.TicketAssignmentWorker;
 import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.entity.MaintainanceRequest;
+import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.mapper.TicketMapper;
+import com.fixora.maintainance.user.infrastructure.entity.customer.Customer;
+import com.fixora.maintainance.user.infrastructure.entity.shared.Apartment;
+import com.fixora.maintainance.user.infrastructure.entity.shared.Building;
+import com.fixora.maintainance.user.infrastructure.entity.shared.Company;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -11,21 +18,27 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class TicketRepository implements ITicketRepository {
 
 
     private final TicketJpaRepository ticketJpaRepository;
+    private final TicketAssignmentWorker ticketAssignmentWorker;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public TicketRepository(TicketJpaRepository ticketJpaRepository) {
+    public TicketRepository(TicketJpaRepository ticketJpaRepository, TicketAssignmentWorker ticketAssignmentWorker) {
         this.ticketJpaRepository = ticketJpaRepository;
+        this.ticketAssignmentWorker = ticketAssignmentWorker;
     }
 
     @Override
@@ -56,9 +69,73 @@ public class TicketRepository implements ITicketRepository {
         query.setMaxResults(ticketQuery.getPageable().getPageSize());
         List<MaintainanceRequest> result=query.getResultList();
 
-        List<Ticket> ticketList = result.stream()
-                .map(this::mapToTicket) // stub for now
+         List<Ticket> tickets=result.stream()
+                .map(TicketMapper::toTicket)
                 .toList();
-        return null;
+         return new PageImpl<>(tickets, ticketQuery.getPageable(), getTotalCount(ticketQuery));
     }
+
+    private long getTotalCount(TicketQuery ticketQuery) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<MaintainanceRequest> root = countQuery.from(MaintainanceRequest.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(root.get("customer").get("user").get("id"), ticketQuery.getUserId()));
+
+        if (ticketQuery.getFilter().getTicketStatus() != null) {
+            predicates.add(cb.equal(root.get("status"), ticketQuery.getFilter().getTicketStatus()));
+        }
+        if (ticketQuery.getFilter().getDateFrom() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), ticketQuery.getFilter().getDateFrom()));
+        }
+        if (ticketQuery.getFilter().getDateTo() != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), ticketQuery.getFilter().getDateTo()));
+        }
+        if (ticketQuery.getFilter().getCompanyId() != null) {
+            predicates.add(cb.equal(root.get("company").get("id"), ticketQuery.getFilter().getCompanyId()));
+        }
+
+        countQuery.select(cb.count(root));
+        countQuery.where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(countQuery).getSingleResult();
+    }
+
+    @Transactional
+    public Ticket createNewTicket(TicketRequest ticketRequest){
+        MaintainanceRequest maintainanceRequest=new MaintainanceRequest();
+        maintainanceRequest.setDescription(ticketRequest.getDescription());
+        maintainanceRequest.setPictureUrl(ticketRequest.getImageUrl());
+        maintainanceRequest.setStatus(TicketStatus.PENDING);
+        Customer customer = entityManager.find(Customer.class, ticketRequest.getUserId());
+        Company company=entityManager.find(Company.class,ticketRequest.getCompanyId());
+        Apartment apartment=customer.getApartment();
+        Building building=apartment.getBuilding();
+        maintainanceRequest.setApartment(apartment);
+        maintainanceRequest.setCustomer(customer);
+        maintainanceRequest.setBuilding(building);
+        maintainanceRequest.setCompany(company);
+        maintainanceRequest.setPreferredTime(ticketRequest.getPreferredSlot().toString());
+
+        entityManager.persist(maintainanceRequest);
+
+        return TicketMapper.toTicket(maintainanceRequest);
+
+    }
+
+    @Transactional
+    public void assignUnassignedPendingTickets(){
+
+         ticketJpaRepository.findUnassignedPendingTickets().
+                forEach(ticketAssignmentWorker::assignSingleTicketSafely);
+
+    }
+
+
+
+
+
+
 }

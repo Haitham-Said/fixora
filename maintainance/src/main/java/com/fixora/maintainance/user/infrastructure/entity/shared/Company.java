@@ -1,6 +1,6 @@
 package com.fixora.maintainance.user.infrastructure.entity.shared;
 
-import com.fixora.maintainance.user.infrastructure.entity.User;
+import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -24,9 +24,65 @@ public class Company {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "company")
-    private List<User> users;
+    private List<UserEntity> userEntities;
 
     @OneToMany(mappedBy = "company")
     private List<Building> buildings;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public List<UserEntity> getUsers() {
+        return userEntities;
+    }
+
+    public List<Building> getBuildings() {
+        return buildings;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
 

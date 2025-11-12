@@ -34,7 +34,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String token=authorization.substring(7);
             Claims claims=jwtUtil.getClaims(token);
             List<GrantedAuthority> authorities=Collections.singletonList(new SimpleGrantedAuthority((String)claims.get("role")));
-            UserInfo userInfo=new UserInfo((Long)claims.get("userId"),(String)claims.get("userEmail"),(String)claims.get("role"),(Integer)claims.get("companyId"));
+            UserInfo userInfo=new UserInfo(((Number) claims.get("userId")).longValue(),(String)claims.get("userEmail"),(String)claims.get("role"),claims.get("companyId")==null?null:((Number) claims.get("companyId")).longValue());
             UsernamePasswordAuthenticationToken auth=new UsernamePasswordAuthenticationToken(userInfo,null,authorities);
 
             SecurityContextHolder.getContext().setAuthentication(auth);

@@ -40,4 +40,24 @@ public class Building {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

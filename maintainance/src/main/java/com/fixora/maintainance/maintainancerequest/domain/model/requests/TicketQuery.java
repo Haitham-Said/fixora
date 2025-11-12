@@ -1,4 +1,4 @@
-package com.fixora.maintainance.maintainancerequest.domain.model;
+package com.fixora.maintainance.maintainancerequest.domain.model.requests;
 
 import lombok.Builder;
 import lombok.Data;
