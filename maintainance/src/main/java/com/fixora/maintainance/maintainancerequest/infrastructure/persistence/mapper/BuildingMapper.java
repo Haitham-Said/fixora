@@ -9,6 +9,7 @@ public class BuildingMapper {
                 .id(buildingEntity.getId())
                 .address(buildingEntity.getAddress())
                 .name(buildingEntity.getName())
+                .companyId(buildingEntity.getCompany() != null ? buildingEntity.getCompany().getId() : null)
                 .build();
     }
 }

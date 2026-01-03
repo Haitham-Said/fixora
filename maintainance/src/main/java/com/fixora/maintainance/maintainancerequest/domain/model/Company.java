@@ -1,7 +1,5 @@
 package com.fixora.maintainance.maintainancerequest.domain.model;
 
-import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
-import com.fixora.maintainance.user.infrastructure.entity.shared.Building;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,9 +10,7 @@ import java.util.List;
 @Builder
 public class Company {
 
-
     private Long id;
-
 
     private String name;
 
@@ -22,12 +18,12 @@ public class Company {
     private String phone;
     private String address;
 
-
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    // Domain model references - using IDs to avoid circular dependencies
+    // Infrastructure layer will handle loading full entities when needed
+    private List<Long> userIds;
 
-    private List<UserEntity> userEntities;
-
-    private List<Building> buildings;
+    private List<Long> buildingIds;
 
 }

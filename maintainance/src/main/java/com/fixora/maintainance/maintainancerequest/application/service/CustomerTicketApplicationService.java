@@ -5,7 +5,7 @@ import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketRequest;
 import com.fixora.maintainance.maintainancerequest.domain.model.Urgency;
 import com.fixora.maintainance.maintainancerequest.domain.service.TicketService;
-import com.fixora.maintainance.maintainancerequest.inbound.model.PreferredSlot;
+import com.fixora.maintainance.maintainancerequest.domain.model.PreferredSlot;
 import com.fixora.maintainance.maintainancerequest.inbound.model.TicketQueryRequest;
 import com.fixora.security.application.model.UserInfo;
 import org.springframework.data.domain.Page;

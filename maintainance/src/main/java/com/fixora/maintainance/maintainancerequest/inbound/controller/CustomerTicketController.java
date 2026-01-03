@@ -3,7 +3,7 @@ package com.fixora.maintainance.maintainancerequest.inbound.controller;
 import com.fixora.maintainance.maintainancerequest.application.service.CustomerTicketApplicationService;
 import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
 import com.fixora.maintainance.maintainancerequest.domain.model.Urgency;
-import com.fixora.maintainance.maintainancerequest.inbound.model.PreferredSlot;
+import com.fixora.maintainance.maintainancerequest.domain.model.PreferredSlot;
 import com.fixora.maintainance.maintainancerequest.inbound.model.TicketQueryRequest;
 import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import com.fixora.security.application.model.UserInfo;

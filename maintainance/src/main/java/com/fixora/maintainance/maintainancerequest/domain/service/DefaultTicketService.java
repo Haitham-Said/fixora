@@ -6,9 +6,7 @@ import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketR
 import com.fixora.maintainance.maintainancerequest.domain.repository.ITicketRepository;
 import com.fixora.maintainance.user.domain.repositories.IUserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
 
-@Service
 public class DefaultTicketService implements TicketService{
 
     private final ITicketRepository ticketRepository;

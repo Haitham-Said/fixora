@@ -1,7 +1,7 @@
 package com.fixora.maintainance.maintainancerequest.domain.model.requests;
 
 import com.fixora.maintainance.maintainancerequest.domain.model.Urgency;
-import com.fixora.maintainance.maintainancerequest.inbound.model.PreferredSlot;
+import com.fixora.maintainance.maintainancerequest.domain.model.PreferredSlot;
 import lombok.Builder;
 import lombok.Data;
 

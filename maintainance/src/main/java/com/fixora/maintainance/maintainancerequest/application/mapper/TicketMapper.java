@@ -1,8 +1,10 @@
 package com.fixora.maintainance.maintainancerequest.application.mapper;
 
+import com.fixora.maintainance.maintainancerequest.domain.model.PaginationRequest;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketQuery;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketFilter;
 import com.fixora.maintainance.maintainancerequest.inbound.model.TicketQueryRequest;
+import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.mapper.PaginationMapper;
 import com.fixora.security.application.model.UserInfo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -21,7 +23,7 @@ public class TicketMapper {
                         .role(ticketQueryRequest.role())
                         .build())
                 .requestId(ticketQueryRequest.requestId())
-                .pageable(pageable)
+                .pagination(PaginationMapper.toDomain(pageable))
                 .build();
     }
 }

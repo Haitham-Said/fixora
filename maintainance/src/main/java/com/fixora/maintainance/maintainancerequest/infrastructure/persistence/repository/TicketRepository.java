@@ -57,7 +57,7 @@ public class TicketRepository implements ITicketRepository {
             predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"),ticketQuery.getFilter().getDateFrom()));
         }
         if(ticketQuery.getFilter().getDateTo()!=null){
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"),ticketQuery.getFilter().getDateFrom()));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"),ticketQuery.getFilter().getDateTo()));
         }
         if(ticketQuery.getFilter().getCompanyId()!=null){
             predicates.add(criteriaBuilder.equal(root.get("company").get("id"),ticketQuery.getFilter().getCompanyId()));
@@ -65,14 +65,27 @@ public class TicketRepository implements ITicketRepository {
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         criteriaQuery.orderBy(criteriaBuilder.desc(root.get("createdAt")));
         TypedQuery<MaintainanceRequest> query= entityManager.createQuery(criteriaQuery);
-        query.setFirstResult((int) ticketQuery.getPageable().getOffset());
-        query.setMaxResults(ticketQuery.getPageable().getPageSize());
+        
+        // Use domain pagination
+        var pagination = ticketQuery.getPagination() != null 
+            ? ticketQuery.getPagination() 
+            : com.fixora.maintainance.maintainancerequest.domain.model.PaginationRequest.builder().build();
+        
+        query.setFirstResult(pagination.getOffset());
+        query.setMaxResults(pagination.getPageSize());
         List<MaintainanceRequest> result=query.getResultList();
 
          List<Ticket> tickets=result.stream()
                 .map(TicketMapper::toTicket)
                 .toList();
-         return new PageImpl<>(tickets, ticketQuery.getPageable(), getTotalCount(ticketQuery));
+         
+         // Convert domain pagination to Spring Pageable for PageImpl
+         org.springframework.data.domain.Pageable pageable = 
+             org.springframework.data.domain.PageRequest.of(
+                 pagination.getPageNumber(), 
+                 pagination.getPageSize()
+             );
+         return new PageImpl<>(tickets, pageable, getTotalCount(ticketQuery));
     }
 
     private long getTotalCount(TicketQuery ticketQuery) {
