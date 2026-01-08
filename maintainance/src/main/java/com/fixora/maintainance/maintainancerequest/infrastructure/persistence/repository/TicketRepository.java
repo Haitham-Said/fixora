@@ -8,9 +8,9 @@ import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.Ti
 import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.entity.MaintainanceRequest;
 import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.mapper.TicketMapper;
 import com.fixora.maintainance.user.infrastructure.entity.customer.Customer;
-import com.fixora.maintainance.user.infrastructure.entity.shared.Apartment;
-import com.fixora.maintainance.user.infrastructure.entity.shared.Building;
-import com.fixora.maintainance.user.infrastructure.entity.shared.Company;
+import com.fixora.maintainance.property.infrastructure.entity.Apartment;
+import com.fixora.maintainance.property.infrastructure.entity.Building;
+import com.fixora.maintainance.property.infrastructure.entity.Company;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;

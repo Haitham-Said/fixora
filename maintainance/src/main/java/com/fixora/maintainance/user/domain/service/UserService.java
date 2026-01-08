@@ -5,6 +5,7 @@ import com.fixora.maintainance.user.domain.model.request.MaintainerRequest;
 import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 import com.fixora.maintainance.user.domain.exception.UserNotFoundException;
 import com.fixora.maintainance.user.domain.repositories.IUserRepository;
+import com.fixora.maintainance.user.domain.repositories.IMaintainerRepository;
 import org.springframework.stereotype.Component;
 import com.fixora.maintainance.user.domain.model.User;
 
@@ -14,9 +15,11 @@ import java.util.List;
 @Component
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
+    private final IMaintainerRepository maintainerRepository;
 
-    public UserService(IUserRepository userRepository) {
+    public UserService(IUserRepository userRepository, IMaintainerRepository maintainerRepository) {
         this.userRepository = userRepository;
+        this.maintainerRepository = maintainerRepository;
     }
 
     public UserEntity findUserByEmail(String username) {
@@ -30,9 +33,8 @@ public class UserService implements IUserService {
     }
 
     public Maintainer addMaintainer(MaintainerRequest maintainerRequest){
-        User user= userRepository.addUser(maintainerRequest);
-
-
-
+        User user = userRepository.addUser(maintainerRequest);
+        Maintainer maintainer = maintainerRepository.addMaintainer(user);
+        return maintainer;
     }
 }

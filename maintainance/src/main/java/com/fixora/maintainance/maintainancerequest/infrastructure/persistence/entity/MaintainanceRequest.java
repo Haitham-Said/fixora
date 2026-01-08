@@ -5,9 +5,9 @@ import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import com.fixora.maintainance.user.infrastructure.entity.customer.Customer;
 import com.fixora.maintainance.user.infrastructure.entity.maintainer.MaintainerEntity;
 
-import com.fixora.maintainance.user.infrastructure.entity.shared.Apartment;
-import com.fixora.maintainance.user.infrastructure.entity.shared.Building;
-import com.fixora.maintainance.user.infrastructure.entity.shared.Company;
+import com.fixora.maintainance.property.infrastructure.entity.Apartment;
+import com.fixora.maintainance.property.infrastructure.entity.Building;
+import com.fixora.maintainance.property.infrastructure.entity.Company;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

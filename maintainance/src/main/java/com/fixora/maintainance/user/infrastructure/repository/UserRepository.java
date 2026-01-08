@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import com.fixora.maintainance.user.infrastructure.entity.shared.Company;
+import com.fixora.maintainance.property.infrastructure.entity.Company;
 
 @Component
 public class UserRepository implements IUserRepository {

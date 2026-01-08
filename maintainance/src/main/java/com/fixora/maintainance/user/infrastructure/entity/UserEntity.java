@@ -1,7 +1,7 @@
 package com.fixora.maintainance.user.infrastructure.entity;
 
 
-import com.fixora.maintainance.user.infrastructure.entity.shared.Company;
+import com.fixora.maintainance.property.infrastructure.entity.Company;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

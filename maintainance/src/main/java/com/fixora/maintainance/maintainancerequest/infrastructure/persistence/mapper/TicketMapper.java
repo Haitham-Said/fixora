@@ -1,7 +1,9 @@
 package com.fixora.maintainance.maintainancerequest.infrastructure.persistence.mapper;
 
-import com.fixora.maintainance.maintainancerequest.domain.model.*;
+import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
 import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.entity.MaintainanceRequest;
+import com.fixora.maintainance.property.domain.model.Apartment;
+import com.fixora.maintainance.property.domain.model.Building;
 import com.fixora.maintainance.user.domain.model.Customer;
 import com.fixora.maintainance.user.domain.model.Maintainer;
 import com.fixora.maintainance.user.domain.model.User;
