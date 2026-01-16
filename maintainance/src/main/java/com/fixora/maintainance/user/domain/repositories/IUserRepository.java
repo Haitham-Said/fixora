@@ -15,6 +15,7 @@ public interface IUserRepository {
     List<Maintainer> findAvailableMaintainersForSlotAndCompany(String preferredSlot,Long id);
 
      com.fixora.maintainance.user.domain.model.User addUser(MaintainerRequest maintainerRequest);
+     com.fixora.maintainance.user.domain.model.User addUser(com.fixora.maintainance.user.domain.model.request.CustomerRequest customerRequest);
 
 
 

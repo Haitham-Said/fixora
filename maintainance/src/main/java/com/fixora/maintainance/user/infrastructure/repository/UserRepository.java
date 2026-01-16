@@ -52,6 +52,23 @@ public class UserRepository implements IUserRepository {
 
     }
 
+    @Transactional
+    public com.fixora.maintainance.user.domain.model.User addUser(com.fixora.maintainance.user.domain.model.request.CustomerRequest customerRequest){
+        UserEntity userEntity = new UserEntity();
+        userEntity.setName(customerRequest.getName());
+        Company company = new Company();
+        company.setId(customerRequest.getCompanyId());
+        userEntity.setCompany(company);
+        userEntity.setEmail(customerRequest.getEmail());
+        userEntity.setPhone(customerRequest.getPhone());
+        userEntity.setRole(com.fixora.maintainance.user.domain.model.Role.CUSTOMER.name());
+        // Set temporary password hash - will be changed on first login
+        userEntity.setPasswordHash("TEMP_PASSWORD");
+        userJpaRepository.save(userEntity);
+
+        return UserMapper.toDomain(userEntity);
+    }
+
 
 
 
