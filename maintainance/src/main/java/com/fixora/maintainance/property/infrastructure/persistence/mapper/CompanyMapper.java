@@ -14,6 +14,7 @@ public class CompanyMapper {
                 .email(companyEntity.getEmail())
                 .name(companyEntity.getName())
                 .address(companyEntity.getAddress())
+                .companyCode(companyEntity.getCompanyCode())
                 .createdAt(companyEntity.getCreatedAt())
                 .userIds(companyEntity.getUsers() != null ? 
                     companyEntity.getUsers().stream()

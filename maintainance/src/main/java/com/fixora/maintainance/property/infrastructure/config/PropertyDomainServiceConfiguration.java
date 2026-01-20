@@ -19,8 +19,8 @@ public class PropertyDomainServiceConfiguration {
     }
 
     @Bean
-    public BuildingService buildingService(IBuildingRepository buildingRepository) {
-        return new DefaultBuildingService(buildingRepository);
+    public BuildingService buildingService(IBuildingRepository buildingRepository, ICompanyRepository companyRepository) {
+        return new DefaultBuildingService(buildingRepository, companyRepository);
     }
 }
 

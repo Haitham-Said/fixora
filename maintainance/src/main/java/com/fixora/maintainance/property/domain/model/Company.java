@@ -17,6 +17,7 @@ public class Company {
     private String email;
     private String phone;
     private String address;
+    private String companyCode;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();

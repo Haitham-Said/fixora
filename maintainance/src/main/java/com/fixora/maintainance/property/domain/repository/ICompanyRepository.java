@@ -6,5 +6,6 @@ import com.fixora.maintainance.property.domain.model.requests.CompanyRequest;
 public interface ICompanyRepository {
 
     Company addCompany(CompanyRequest companyRequest);
+    Company findByCompanyCode(String companyCode);
 }
 

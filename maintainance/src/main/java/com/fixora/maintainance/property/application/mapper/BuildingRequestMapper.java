@@ -7,7 +7,7 @@ public class BuildingRequestMapper {
 
     public static BuildingRequest toDomainRequest(BuildingRequestDTO buildingRequestDTO){
         return BuildingRequest.builder()
-                .companyId(buildingRequestDTO.getCompanyId())
+                .companyCode(buildingRequestDTO.getCompanyCode())
                 .name(buildingRequestDTO.getName())
                 .address(buildingRequestDTO.getAddress())
                 .build();

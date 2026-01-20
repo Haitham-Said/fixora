@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class BuildingRequest {
-    private Long companyId;
+    private String companyCode;  // Used for lookup in domain service
+    private Long companyId;      // Used by repository after resolution
     private String name;
     private String address;
 }

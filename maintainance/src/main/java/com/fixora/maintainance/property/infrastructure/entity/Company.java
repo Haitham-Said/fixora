@@ -20,6 +20,9 @@ public class Company {
     private String phone;
     private String address;
 
+    @Column(name = "company_code")
+    private String companyCode;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -79,6 +82,14 @@ public class Company {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getCompanyCode() {
+        return companyCode;
+    }
+
+    public void setCompanyCode(String companyCode) {
+        this.companyCode = companyCode;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

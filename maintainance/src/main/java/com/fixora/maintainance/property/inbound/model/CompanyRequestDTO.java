@@ -5,6 +5,7 @@ public record CompanyRequestDTO(
      String name,
      String email,
      String phone,
-     String address
+     String address,
+     String companyCode
 ){}
 

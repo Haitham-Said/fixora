@@ -33,10 +33,5 @@ public class ApartmentRepository implements IApartmentRepository {
 
         repository.saveAll(apartmentList);
     }
-
-    @Override
-    public Apartment findByBuildingIdAndApartmentNumber(Long buildingId, String apartmentNumber) {
-        return repository.findByBuildingIdAndApartmentNumber(buildingId, apartmentNumber);
-    }
 }
 

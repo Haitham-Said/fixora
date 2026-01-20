@@ -19,6 +19,11 @@ public class BuildingRepository implements IBuildingRepository {
     @Override
     @Transactional
     public Building addBuilding(BuildingRequest buildingRequest) {
+        // Repository only handles data persistence - business logic is in domain service
+        if (buildingRequest.getCompanyId() == null) {
+            throw new IllegalStateException("Company ID must be resolved before persisting building");
+        }
+
         com.fixora.maintainance.property.infrastructure.entity.Building buildingEntity=new com.fixora.maintainance.property.infrastructure.entity.Building();
         buildingEntity.setAddress(buildingRequest.getAddress());
         buildingEntity.setName(buildingRequest.getName());

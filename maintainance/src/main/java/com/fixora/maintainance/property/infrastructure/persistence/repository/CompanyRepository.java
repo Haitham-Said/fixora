@@ -24,8 +24,18 @@ public class CompanyRepository implements ICompanyRepository {
         company.setEmail(companyRequest.getEmail());
         company.setName(companyRequest.getName());
         company.setPhone(companyRequest.getPhone());
+        company.setCompanyCode(companyRequest.getCompanyCode());
         companyJPARepository.save(company);
         return CompanyMapper.toDomain(company);
+    }
+
+    @Override
+    public Company findByCompanyCode(String companyCode) {
+        com.fixora.maintainance.property.infrastructure.entity.Company companyEntity = companyJPARepository.findByCompanyCode(companyCode);
+        if (companyEntity == null) {
+            return null;
+        }
+        return CompanyMapper.toDomain(companyEntity);
     }
 }
 
