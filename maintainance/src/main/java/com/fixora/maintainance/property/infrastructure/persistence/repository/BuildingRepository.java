@@ -27,6 +27,7 @@ public class BuildingRepository implements IBuildingRepository {
         com.fixora.maintainance.property.infrastructure.entity.Building buildingEntity=new com.fixora.maintainance.property.infrastructure.entity.Building();
         buildingEntity.setAddress(buildingRequest.getAddress());
         buildingEntity.setName(buildingRequest.getName());
+        buildingEntity.setBuildingCode(buildingRequest.getBuildingCode());
         Company company=new Company();
         company.setId(buildingRequest.getCompanyId());
 

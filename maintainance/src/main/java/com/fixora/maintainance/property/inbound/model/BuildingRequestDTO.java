@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class BuildingRequestDTO {
     private String companyCode;
+    private String buildingCode;
     private String name;
     private String address;
 }

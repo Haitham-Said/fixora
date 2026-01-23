@@ -26,6 +26,7 @@ public class DefaultBuildingService implements BuildingService{
         // Create new request with resolved company ID for repository
         BuildingRequest requestWithCompanyId = BuildingRequest.builder()
                 .companyId(company.getId())
+                .buildingCode(buildingRequest.getBuildingCode())
                 .name(buildingRequest.getName())
                 .address(buildingRequest.getAddress())
                 .build();
