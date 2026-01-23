@@ -1,9 +1,8 @@
 package com.fixora.maintainance.property.infrastructure.persistence.repository;
 
+import com.fixora.maintainance.property.domain.model.Apartment;
 import com.fixora.maintainance.property.domain.model.requests.ApartmentRequest;
 import com.fixora.maintainance.property.domain.repository.IApartmentRepository;
-import com.fixora.maintainance.property.infrastructure.entity.Apartment;
-
 import com.fixora.maintainance.property.infrastructure.entity.Building;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
@@ -21,8 +20,8 @@ public class ApartmentRepository implements IApartmentRepository {
     @Override
     @Transactional
     public void addApartments(List<ApartmentRequest> apartmentRequests) {
-        List<Apartment> apartmentList=apartmentRequests.stream().map(apartmentRequest -> {
-            Apartment apartment=new Apartment();
+        List<com.fixora.maintainance.property.infrastructure.entity.Apartment> apartmentList=apartmentRequests.stream().map(apartmentRequest -> {
+            com.fixora.maintainance.property.infrastructure.entity.Apartment apartment=new com.fixora.maintainance.property.infrastructure.entity.Apartment();
             Building building=new Building();
             building.setId(apartmentRequest.getBuildingId());
             apartment.setBuilding(building);
@@ -32,6 +31,23 @@ public class ApartmentRepository implements IApartmentRepository {
         }).toList();
 
         repository.saveAll(apartmentList);
+    }
+
+    @Override
+    public Apartment findByBuildingIdAndApartmentNumber(Long buildingId, String apartmentNumber) {
+        com.fixora.maintainance.property.infrastructure.entity.Apartment apartmentEntity = repository.findByBuildingIdAndApartmentNumber(buildingId, apartmentNumber);
+        if (apartmentEntity == null) {
+            return null;
+        }
+        return toDomain(apartmentEntity);
+    }
+
+    private Apartment toDomain(com.fixora.maintainance.property.infrastructure.entity.Apartment apartmentEntity) {
+        Apartment apartment = new Apartment();
+        apartment.setId(apartmentEntity.getId());
+        apartment.setApartmentNumber(apartmentEntity.getApartmentNumber());
+        apartment.setFloorNumber(apartmentEntity.getFloorNumber());
+        return apartment;
     }
 }
 

@@ -27,8 +27,8 @@ public class BuildingController {
     @PostMapping
     public ResponseEntity<Building> addBuilding(@RequestBody BuildingRequestDTO buildingRequest){
         Building building=buildingApplicationService.addBuilding(buildingRequest);
-        URI uri=URI.create("/buildings/"+building.getId());
-        return ResponseEntity.created(uri).body(building);
+        URI location=URI.create("/buildings/"+building.getId());
+        return ResponseEntity.created(location).body(building);
     }
 }
 

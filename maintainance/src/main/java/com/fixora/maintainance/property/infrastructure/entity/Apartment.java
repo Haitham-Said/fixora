@@ -46,5 +46,9 @@ public class Apartment {
     public void setFloorNumber(Integer floorNumber) {
         this.floorNumber = floorNumber;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
 

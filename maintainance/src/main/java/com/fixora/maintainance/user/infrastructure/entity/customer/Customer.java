@@ -40,4 +40,16 @@ public class Customer {
     public LocalDate getMoveInDate() {
         return moveInDate;
     }
+
+    public void setUser(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
+    public void setApartment(Apartment apartment) {
+        this.apartment = apartment;
+    }
+
+    public void setMoveInDate(LocalDate moveInDate) {
+        this.moveInDate = moveInDate;
+    }
 }

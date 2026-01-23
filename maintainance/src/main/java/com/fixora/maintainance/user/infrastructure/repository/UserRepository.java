@@ -52,9 +52,20 @@ public class UserRepository implements IUserRepository {
 
     }
 
+    @Transactional
+    public com.fixora.maintainance.user.domain.model.User addUser(String name, String email, String phone, String role, Long companyId){
+        UserEntity userEntity =new UserEntity();
+        userEntity.setName(name);
+        Company company=new Company();
+        company.setId(companyId);
+        userEntity.setCompany(company);
+        userEntity.setEmail(email);
+        userEntity.setPhone(phone);
+        userEntity.setRole(role);
+        userEntity.setPasswordHash(""); // Will be set when user confirms account
+        userJpaRepository.save(userEntity);
 
-
-
-
+        return UserMapper.toDomain(userEntity);
+    }
 
 }
