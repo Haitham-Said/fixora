@@ -52,7 +52,7 @@ public class MaintainanceRequest {
 
     @ManyToOne
     @JoinColumn(name = "maintainer_id")
-    private MaintainerEntity maintainerEntity;
+    private MaintainerEntity maintainer;
 
     @Column(name = "customer_rate")
     private Integer customerRate;
@@ -96,7 +96,7 @@ public class MaintainanceRequest {
     }
 
     public MaintainerEntity getMaintainer() {
-        return maintainerEntity;
+        return maintainer;
     }
 
     public Integer getCustomerRate() {
@@ -155,8 +155,8 @@ public class MaintainanceRequest {
         this.status = status;
     }
 
-    public void setMaintainer(MaintainerEntity maintainerEntity) {
-        this.maintainerEntity = maintainerEntity;
+    public void setMaintainer(MaintainerEntity maintainer) {
+        this.maintainer = maintainer;
     }
 
     public void setCustomerRate(Integer customerRate) {

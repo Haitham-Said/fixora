@@ -5,9 +5,9 @@ jwt:
 
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:5432/maintenance_db"
+    url: "jdbc:postgresql://localhost:5432/maintainance_db"
     username: postgres
-    password: 0163625818
+    password: 0163625818aA@
     driver: org.postgresql.Driver
 
   jpa:

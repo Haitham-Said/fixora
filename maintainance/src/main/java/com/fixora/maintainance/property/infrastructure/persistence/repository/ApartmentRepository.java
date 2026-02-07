@@ -42,11 +42,19 @@ public class ApartmentRepository implements IApartmentRepository {
         return toDomain(apartmentEntity);
     }
 
+    @Override
+    public Apartment findById(Long apartmentId) {
+        return repository.findById(apartmentId)
+                .map(this::toDomain)
+                .orElse(null);
+    }
+
     private Apartment toDomain(com.fixora.maintainance.property.infrastructure.entity.Apartment apartmentEntity) {
         Apartment apartment = new Apartment();
         apartment.setId(apartmentEntity.getId());
         apartment.setApartmentNumber(apartmentEntity.getApartmentNumber());
         apartment.setFloorNumber(apartmentEntity.getFloorNumber());
+        apartment.setBuildingId(apartmentEntity.getBuilding() != null ? apartmentEntity.getBuilding().getId() : null);
         return apartment;
     }
 }

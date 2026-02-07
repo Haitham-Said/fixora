@@ -11,5 +11,7 @@ public class Apartment {
     private String apartmentNumber;
 
     private Integer floorNumber;
+    
+    private Long buildingId;
 }
 

@@ -9,11 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface UserJpaRepository extends JpaRepository<UserEntity, UUID> {
+public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByEmail(String email);
+    
+    List<UserEntity> findByStatus(String status);
+    
+    Optional<UserEntity> findByIdAndStatus(Long id, String status);
 
     @Query(value = """
             SELECT m.* FROM maintainers m

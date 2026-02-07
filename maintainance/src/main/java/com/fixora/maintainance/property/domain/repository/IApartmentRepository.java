@@ -9,5 +9,6 @@ public interface IApartmentRepository {
 
     void addApartments(List<ApartmentRequest> apartmentRequests);
     Apartment findByBuildingIdAndApartmentNumber(Long buildingId, String apartmentNumber);
+    Apartment findById(Long apartmentId);
 }
 

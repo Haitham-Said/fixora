@@ -7,5 +7,6 @@ public interface BuildingService {
 
     Building addBuilding(BuildingRequest buildingRequest);
     Building getBuildingByBuildingCode(String buildingCode);
+    Building getBuildingById(Long buildingId);
 }
 

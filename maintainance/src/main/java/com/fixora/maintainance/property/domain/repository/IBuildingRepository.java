@@ -6,5 +6,6 @@ import com.fixora.maintainance.property.domain.model.requests.BuildingRequest;
 public interface IBuildingRepository {
     Building addBuilding(BuildingRequest buildingRequestRequest);
     Building findByBuildingCode(String buildingCode);
+    Building findById(Long buildingId);
 }
 

@@ -38,5 +38,10 @@ public class DefaultBuildingService implements BuildingService{
     public Building getBuildingByBuildingCode(String buildingCode) {
         return buildingRepository.findByBuildingCode(buildingCode);
     }
+
+    @Override
+    public Building getBuildingById(Long buildingId) {
+        return buildingRepository.findById(buildingId);
+    }
 }
 

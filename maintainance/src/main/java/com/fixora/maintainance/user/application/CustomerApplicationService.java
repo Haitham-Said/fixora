@@ -1,7 +1,13 @@
 package com.fixora.maintainance.user.application;
 
+import com.fixora.maintainance.user.domain.model.Customer;
+import com.fixora.maintainance.user.domain.model.NotificationRequest;
+import com.fixora.maintainance.user.domain.model.NotificationType;
+import com.fixora.maintainance.user.domain.model.UserCode;
 import com.fixora.maintainance.user.domain.model.request.CustomerRequest;
+import com.fixora.maintainance.user.domain.repositories.IUserCodeRepository;
 import com.fixora.maintainance.user.domain.service.IUserService;
+import com.fixora.maintainance.user.domain.service.INotificationService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -14,13 +20,20 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerApplicationService {
     private final IUserService userService;
+    private final IUserCodeRepository userCodeRepository;
+    private final INotificationService notificationService;
 
-    public CustomerApplicationService(IUserService userService) {
+    public CustomerApplicationService(IUserService userService,
+                                     IUserCodeRepository userCodeRepository,
+                                     INotificationService notificationService) {
         this.userService = userService;
+        this.userCodeRepository = userCodeRepository;
+        this.notificationService = notificationService;
     }
 
     public void addTenants(MultipartFile file){
@@ -69,12 +82,40 @@ public class CustomerApplicationService {
         // Process each tenant request
         for (CustomerRequest request : requests) {
             try {
-                userService.addCustomer(request);
+                Customer customer = userService.addCustomer(request);
+                
+                // Get the generated code using the created user ID
+                Long userId = customer.getUser().getId();
+                Optional<UserCode> userCodeOpt = userCodeRepository.findByUserId(userId);
+                if (userCodeOpt.isPresent()) {
+                    UserCode userCode = userCodeOpt.get();
+                    sendTenantUploadNotification(request.getEmail(), request.getName(), userCode.getCode());
+                }
             } catch (Exception e) {
                 // Log error but continue processing other tenants
                 System.err.println("Error adding tenant: " + request.getEmail() + " - " + e.getMessage());
             }
         }
+    }
+    
+    private void sendTenantUploadNotification(String email, String name, String code) {
+        NotificationRequest notificationRequest = NotificationRequest.builder()
+                .recipientEmail(email)
+                .recipientName(name)
+                .notificationType(NotificationType.TENANT_UPLOAD_CODE)
+                .subject("Welcome! Your Account Activation Code")
+                .message(String.format(
+                    "Dear %s,\n\n" +
+                    "Your account has been created successfully. " +
+                    "Your activation code is: %s\n\n" +
+                    "Please use this code to activate your account.\n\n" +
+                    "Best regards,\nMaintenance Team",
+                    name, code
+                ))
+                .activationCode(code)
+                .build();
+        
+        notificationService.sendNotification(notificationRequest);
     }
 
     private String getCellValueAsString(Row row, int cellIndex) {

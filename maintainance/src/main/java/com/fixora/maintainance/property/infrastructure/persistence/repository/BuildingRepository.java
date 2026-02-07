@@ -44,5 +44,12 @@ public class BuildingRepository implements IBuildingRepository {
         }
         return BuildingMapper.toDomain(buildingEntity);
     }
+
+    @Override
+    public Building findById(Long buildingId) {
+        return buildingJPARepository.findById(buildingId)
+                .map(BuildingMapper::toDomain)
+                .orElse(null);
+    }
 }
 
