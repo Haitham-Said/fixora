@@ -26,6 +26,12 @@ public class UserCodeEntity {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
+    @Column(name = "used_at")
+    private LocalDateTime usedAt;
+
+    @Column(name = "is_used", nullable = false)
+    private Boolean isUsed = false;
+
     public Long getId() {
         return id;
     }
@@ -72,6 +78,22 @@ public class UserCodeEntity {
 
     public void setExpiresAt(LocalDateTime expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public LocalDateTime getUsedAt() {
+        return usedAt;
+    }
+
+    public void setUsedAt(LocalDateTime usedAt) {
+        this.usedAt = usedAt;
+    }
+
+    public Boolean getIsUsed() {
+        return isUsed;
+    }
+
+    public void setIsUsed(Boolean isUsed) {
+        this.isUsed = isUsed;
     }
 }
 

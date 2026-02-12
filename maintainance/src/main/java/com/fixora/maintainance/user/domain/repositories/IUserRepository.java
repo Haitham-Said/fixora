@@ -22,4 +22,6 @@ public interface IUserRepository {
      InactiveUser findInactiveUserById(Long userId);
      void activateUser(Long userId);
      Optional<com.fixora.maintainance.user.domain.model.User> findUserById(Long userId);
+     void updatePassword(Long userId, String encodedPassword);
+     void updatePhone(Long userId, String phone);
 }

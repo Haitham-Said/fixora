@@ -12,10 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -46,6 +45,18 @@ public class MaintainerTicketController {
 
         return maintainerTicketApplicationService.loadTickets(ticketQueryRequest,userInfo,pageable);
 
+    }
+
+    @PutMapping("/{ticketId}/status")
+    public Ticket updateTicketStatus(@PathVariable Long ticketId,
+                                     @RequestBody Map<String, String> statusRequest,
+                                     @AuthenticationPrincipal UserInfo userInfo) {
+        String statusStr = statusRequest.get("status");
+        if (statusStr == null) {
+            throw new IllegalArgumentException("Status is required");
+        }
+        TicketStatus newStatus = TicketStatus.valueOf(statusStr.toUpperCase());
+        return maintainerTicketApplicationService.updateTicketStatus(ticketId, newStatus, userInfo);
     }
 
 }

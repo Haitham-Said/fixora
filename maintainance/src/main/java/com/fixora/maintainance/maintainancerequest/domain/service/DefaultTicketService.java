@@ -1,6 +1,7 @@
 package com.fixora.maintainance.maintainancerequest.domain.service;
 
 import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketQuery;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketRequest;
 import com.fixora.maintainance.maintainancerequest.domain.repository.ITicketRepository;
@@ -30,6 +31,11 @@ public class DefaultTicketService implements TicketService{
 
     public void assignPendingTickets(){
          ticketRepository.assignUnassignedPendingTickets();
+    }
+
+    @Override
+    public Ticket updateTicketStatus(Long ticketId, TicketStatus newStatus, Long maintainerId) {
+        return ticketRepository.updateTicketStatus(ticketId, newStatus, maintainerId);
     }
 
 }

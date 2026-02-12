@@ -70,6 +70,10 @@ public class UserService implements IUserService {
     public Maintainer addMaintainer(MaintainerRequest maintainerRequest){
         User user = userRepository.addUser(maintainerRequest);
         Maintainer maintainer = maintainerRepository.addMaintainer(user);
+        
+        // Generate activation code with ACTIVE status (maintainers are created by admin, so they're already approved)
+        generateAndSaveUserCode(user.getId(), "ACTIVE");
+        
         return maintainer;
     }
 

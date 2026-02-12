@@ -1,5 +1,6 @@
 package com.fixora.exception;
 
+import com.fixora.maintainance.user.domain.exception.InvalidCodeException;
 import com.fixora.maintainance.user.domain.exception.InvalidCredentialException;
 import com.fixora.maintainance.user.domain.exception.UserNotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -26,6 +27,14 @@ public class GlobalExceptionHandling {
 
     @ExceptionHandler(InvalidCredentialException.class)
     public ResponseEntity<ErrorResponse> invalidCredentialsException(InvalidCredentialException ex)
+    {
+        ErrorResponse errorResponse=new ErrorResponse(ErrorCodes.INVALID_CREDENTIALS,ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+
+    }
+
+    @ExceptionHandler(InvalidCodeException.class)
+    public ResponseEntity<ErrorResponse> invalidCodeException(InvalidCodeException ex)
     {
         ErrorResponse errorResponse=new ErrorResponse(ErrorCodes.INVALID_CREDENTIALS,ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);

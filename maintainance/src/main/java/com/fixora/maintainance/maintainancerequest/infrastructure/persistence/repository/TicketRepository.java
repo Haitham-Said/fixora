@@ -146,9 +146,34 @@ public class TicketRepository implements ITicketRepository {
 
     }
 
-
-
-
-
+    @Override
+    @Transactional
+    public Ticket updateTicketStatus(Long ticketId, TicketStatus newStatus, Long maintainerId) {
+        MaintainanceRequest request = entityManager.find(MaintainanceRequest.class, ticketId);
+        if (request == null) {
+            throw new IllegalArgumentException("Ticket not found with ID: " + ticketId);
+        }
+        
+        // Verify the maintainer is assigned to this ticket
+        if (request.getMaintainer() == null || !request.getMaintainer().getUserId().equals(maintainerId)) {
+            throw new IllegalArgumentException("Maintainer is not assigned to this ticket");
+        }
+        
+        // Validate status transition (only allow CLOSED or FIXED from ASSIGNED/IN_PROGRESS)
+        TicketStatus currentStatus = request.getStatus();
+        if (currentStatus != TicketStatus.ASSIGNED && currentStatus != TicketStatus.IN_PROGRESS) {
+            throw new IllegalArgumentException("Cannot update status from " + currentStatus + ". Ticket must be ASSIGNED or IN_PROGRESS.");
+        }
+        
+        if (newStatus != TicketStatus.CLOSED && newStatus != TicketStatus.FIXED) {
+            throw new IllegalArgumentException("Maintainers can only set status to CLOSED or FIXED");
+        }
+        
+        request.setStatus(newStatus);
+        request.setUpdatedAt(java.time.LocalDateTime.now());
+        entityManager.merge(request);
+        
+        return TicketMapper.toTicket(request);
+    }
 
 }

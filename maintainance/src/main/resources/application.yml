@@ -22,3 +22,25 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+aws:
+  s3:
+    bucket-name: fixora-maintenance
+    region: us-east-1
+  # Optional - if not using IAM roles:
+  access-key-id: your-access-key
+  secret-access-key: your-secret-key
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your-email@gmail.com
+    password: your-app-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true  
+

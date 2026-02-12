@@ -2,6 +2,7 @@ package com.fixora.maintainance.maintainancerequest.application.service;
 
 import com.fixora.maintainance.maintainancerequest.application.mapper.TicketMapper;
 import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import com.fixora.maintainance.maintainancerequest.domain.service.TicketService;
 import com.fixora.maintainance.maintainancerequest.inbound.model.TicketQueryRequest;
 import com.fixora.security.application.model.UserInfo;
@@ -22,5 +23,9 @@ public class MaintainerTicketApplicationService {
     public Page<Ticket> loadTickets(TicketQueryRequest ticketQueryRequest, UserInfo userInfo, Pageable pageable){
 
         return ticketService.loadTickets(ticketMapper.toDomain(ticketQueryRequest,userInfo,pageable));
+    }
+
+    public Ticket updateTicketStatus(Long ticketId, TicketStatus newStatus, UserInfo userInfo) {
+        return ticketService.updateTicketStatus(ticketId, newStatus, userInfo.userId());
     }
 }

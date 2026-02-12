@@ -193,4 +193,22 @@ public class UserRepository implements IUserRepository {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public void updatePassword(Long userId, String encodedPassword) {
+        UserEntity userEntity = userJpaRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        userEntity.setPasswordHash(encodedPassword);
+        userJpaRepository.save(userEntity);
+    }
+
+    @Override
+    @Transactional
+    public void updatePhone(Long userId, String phone) {
+        UserEntity userEntity = userJpaRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        userEntity.setPhone(phone);
+        userJpaRepository.save(userEntity);
+    }
+
 }

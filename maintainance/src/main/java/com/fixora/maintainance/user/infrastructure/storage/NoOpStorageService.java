@@ -9,9 +9,12 @@ import java.util.UUID;
 /**
  * No-operation storage service implementation.
  * This is a placeholder that doesn't actually upload files.
- * Replace this with actual storage implementation (S3, Azure Blob, etc.) later.
+ * 
+ * NOTE: This is kept for development/testing. In production, use S3StorageService.
+ * To switch to S3, remove @Service from this class and ensure S3StorageService
+ * is the only implementation of IStorageService.
  */
-@Service
+// @Service  // Commented out - use S3StorageService instead
 public class NoOpStorageService implements IStorageService {
 
     @Override

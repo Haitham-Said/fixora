@@ -2,6 +2,7 @@ package com.fixora.maintainance.maintainancerequest.domain.repository;
 
 
 import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketQuery;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketRequest;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ public interface ITicketRepository {
      Ticket createNewTicket(TicketRequest ticketRequest);
 
      void assignUnassignedPendingTickets();
-
+     
+     Ticket updateTicketStatus(Long ticketId, TicketStatus newStatus, Long maintainerId);
 
 }

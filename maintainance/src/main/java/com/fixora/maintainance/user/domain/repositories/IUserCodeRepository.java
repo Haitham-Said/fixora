@@ -26,5 +26,11 @@ public interface IUserCodeRepository {
      * @return Optional user code
      */
     Optional<UserCode> findByCode(String code);
+    
+    /**
+     * Marks a code as used
+     * @param code The code to mark as used
+     */
+    void markCodeAsUsed(String code);
 }
 

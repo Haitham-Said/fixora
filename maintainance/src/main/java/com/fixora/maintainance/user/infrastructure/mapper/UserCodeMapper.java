@@ -16,6 +16,8 @@ public class UserCodeMapper {
                 .status(entity.getStatus())
                 .createdAt(entity.getCreatedAt())
                 .expiresAt(entity.getExpiresAt())
+                .usedAt(entity.getUsedAt())
+                .isUsed(entity.getIsUsed() != null ? entity.getIsUsed() : false)
                 .build();
     }
 }

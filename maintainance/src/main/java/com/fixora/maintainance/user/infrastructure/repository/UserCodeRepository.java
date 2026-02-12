@@ -7,6 +7,7 @@ import com.fixora.maintainance.user.infrastructure.mapper.UserCodeMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
@@ -38,6 +39,8 @@ public class UserCodeRepository implements IUserCodeRepository {
         entity.setStatus(userCode.getStatus());
         entity.setCreatedAt(userCode.getCreatedAt());
         entity.setExpiresAt(userCode.getExpiresAt());
+        entity.setUsedAt(userCode.getUsedAt());
+        entity.setIsUsed(userCode.getIsUsed() != null ? userCode.getIsUsed() : false);
         
         UserCodeEntity savedEntity = userCodeJpaRepository.save(entity);
         return UserCodeMapper.toDomain(savedEntity);
@@ -53,6 +56,17 @@ public class UserCodeRepository implements IUserCodeRepository {
     public Optional<UserCode> findByCode(String code) {
         return userCodeJpaRepository.findByCode(code)
                 .map(UserCodeMapper::toDomain);
+    }
+
+    @Override
+    @Transactional
+    public void markCodeAsUsed(String code) {
+        userCodeJpaRepository.findByCode(code)
+                .ifPresent(entity -> {
+                    entity.setIsUsed(true);
+                    entity.setUsedAt(LocalDateTime.now());
+                    userCodeJpaRepository.save(entity);
+                });
     }
 }
 

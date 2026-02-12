@@ -14,5 +14,7 @@ public class UserCode {
     private String status; // ACTIVE or INACTIVE
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
+    private LocalDateTime usedAt;
+    private Boolean isUsed = false;
 }
 

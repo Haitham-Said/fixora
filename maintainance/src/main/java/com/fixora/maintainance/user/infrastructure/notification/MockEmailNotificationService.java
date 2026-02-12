@@ -9,9 +9,12 @@ import org.springframework.stereotype.Service;
 /**
  * Mock email notification service implementation.
  * This is a placeholder that doesn't actually send emails.
- * Replace this with actual email implementation (SMTP, SendGrid, AWS SES, etc.) later.
+ * 
+ * NOTE: This is kept for development/testing. In production, use EmailNotificationService.
+ * To switch to real emails, remove @Service from this class and ensure EmailNotificationService
+ * is the only implementation of INotificationService.
  */
-@Service
+// @Service  // Commented out - use EmailNotificationService instead
 public class MockEmailNotificationService implements INotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(MockEmailNotificationService.class);
