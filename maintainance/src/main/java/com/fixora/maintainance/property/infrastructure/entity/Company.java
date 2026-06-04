@@ -1,5 +1,6 @@
 package com.fixora.maintainance.property.infrastructure.entity;
 
+import com.fixora.maintainance.property.domain.model.CompanyType;
 import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 import jakarta.persistence.*;
 
@@ -22,6 +23,10 @@ public class Company {
 
     @Column(name = "company_code")
     private String companyCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 40)
+    private CompanyType type = CompanyType.PROPERTY_MANAGEMENT;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -94,6 +99,14 @@ public class Company {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public CompanyType getType() {
+        return type;
+    }
+
+    public void setType(CompanyType type) {
+        this.type = type;
     }
 }
 

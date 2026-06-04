@@ -10,7 +10,13 @@ import java.util.List;
 @Repository
 public interface TicketJpaRepository extends JpaRepository<MaintainanceRequest,Long> {
 
-    @Query("SELECT t FROM MaintainanceRequest t WHERE t.status = 'PENDING' AND t.maintainer IS NULL")
+    /** Scheduler queue: assignable tickets without maintainer, retries not exhausted. */
+    @Query("""
+            SELECT t FROM MaintainanceRequest t
+            WHERE t.maintainer IS NULL
+              AND t.assignmentRetryCount < 3
+              AND t.status = 'READY_TO_ASSIGN'
+            """)
     List<MaintainanceRequest> findUnassignedPendingTickets();
 
 

@@ -33,6 +33,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/webhooks/**").permitAll()
+                                // Gateway callbacks: no JWT; validated in MaintenancePaymentCallbackValidator + application service.
+                                .requestMatchers("/api/maintenance-payments/**").permitAll()
                                 .anyRequest().authenticated()
                 ).addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

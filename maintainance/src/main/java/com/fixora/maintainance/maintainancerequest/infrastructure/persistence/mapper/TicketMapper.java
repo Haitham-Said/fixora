@@ -8,20 +8,44 @@ import com.fixora.maintainance.user.domain.model.Customer;
 import com.fixora.maintainance.user.domain.model.Maintainer;
 import com.fixora.maintainance.user.domain.model.User;
 
+/**
+ * Maps persistence entity {@link MaintainanceRequest} to domain {@link Ticket} (no JPA leakage to API layer).
+ */
 public class TicketMapper {
 
     public static Ticket toTicket(MaintainanceRequest request) {
+        Long pmId = request.getPmCompanyId();
+        Long executorId = request.getExecutorCompanyId();
+        Long fmId = request.getFacilityManagementCompany() != null
+                ? request.getFacilityManagementCompany().getId() : null;
         return Ticket.builder().
                 apartment(getApartment(request)).
                 building(getBuilding(request)).
                 maintainer(getMaintainer(request))
                 .customer(getCustomer(request))
+                .pmCompanyId(pmId)
+                .executorCompanyId(executorId)
+                .facilityManagementCompanyId(fmId)
+                .companyId(pmId)
                 .status(request.getStatus())
                 .customerRate(request.getCustomerRate())
                 .preferredTime(request.getPreferredTime())
+                .preferredVisitDate(request.getPreferredVisitDate())
                 .id(request.getId())
                 .createdAt(request.getUpdatedAt())
                 .description(request.getDescription())
+                .pictureUrl(request.getPictureUrl())
+                .estimatedAmount(request.getEstimatedAmount())
+                .estimationNote(request.getEstimationNote())
+                .approved(request.isApproved())
+                .paid(request.isPaid())
+                .paymentRef(request.getPaymentRef())
+                .approvalActor(request.getApprovalActor())
+                .ticketApprovalStatus(request.getTicketApprovalStatus())
+                .ticketPaymentStatus(request.getTicketPaymentStatus())
+                .payerType(request.getPayerType())
+                .approvedBy(request.getApprovedBy())
+                .approvedAt(request.getApprovedAt())
                 .build();
 
     }

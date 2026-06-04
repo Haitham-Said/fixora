@@ -3,6 +3,21 @@ jwt:
     secret: LWJ1FUzrA4cpm7U6XLXtRgR5RVxg7mHtQwNzdUFetAY=
     expirationMs: 86400000
 
+# Used to resolve Today / Tomorrow / Day-after for WhatsApp scheduling (IANA id). Override with FIXORA_APP_TIMEZONE.
+fixora:
+  app:
+    timezone: ${FIXORA_APP_TIMEZONE:Asia/Dubai}
+  # Payment gateway callbacks: when set, callers must send header X-Fixora-Signature = hex(HMAC-SHA256(secret, ticketId|amount|paymentRef|gatewayStatus)).
+  payment:
+    callback:
+      secret: ${FIXORA_PAYMENT_CALLBACK_SECRET:}
+
+app:
+  media:
+    # Media storage mode: s3 | direct
+    # - s3: download Twilio media and upload to S3 (default/backward-compatible)
+    # - direct: store Twilio media URL directly (no AWS/S3 beans required)
+    storage-type: ${APP_MEDIA_STORAGE_TYPE:direct}
 
 spring:
   datasource:
@@ -31,16 +46,21 @@ aws:
   access-key-id: your-access-key
   secret-access-key: your-secret-key
 
-spring:
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: your-email@gmail.com
-    password: your-app-password
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true  
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID:}
+  auth-token: ${TWILIO_AUTH_TOKEN:}
+  sender-whatsapp-number: ${TWILIO_SENDER_WHATSAPP:whatsapp:+14155238886}
+  # Optional: Twilio Content Template SIDs for real WhatsApp quick-reply buttons (Console → Messaging → Content).
+  # Leave empty to keep plain-text fallback (bullet + "reply: ID"). Variables must match your template placeholders.
+  whatsapp:
+    content:
+      welcome-buttons-sid: ${TWILIO_CONTENT_WELCOME_BUTTONS_SID:}
+      # JSON object for Content template variables (override via env or replace here).
+      welcome-buttons-variables: "{}"
+      visit-date-buttons-sid: ${TWILIO_CONTENT_VISIT_DATE_BUTTONS_SID:}
+      visit-date-buttons-variables: "{}"
+      visit-slot-buttons-sid: ${TWILIO_CONTENT_VISIT_SLOT_BUTTONS_SID:}
+      visit-slot-buttons-variables: "{}"
+      # Optional: send templates via Messaging Service instead of From (some Twilio setups).
+      messaging-service-sid: ${TWILIO_MESSAGING_SERVICE_SID:}
 

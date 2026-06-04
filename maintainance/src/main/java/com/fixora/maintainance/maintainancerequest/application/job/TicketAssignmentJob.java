@@ -13,7 +13,7 @@ public class TicketAssignmentJob {
         this.ticketAssignmentService = ticketAssignmentService;
     }
 
-    @Scheduled(fixedRate = 3*60*1000)
+    @Scheduled(fixedRate = 3 * 60 * 1000)
     public void ticketAssignment() {
         ticketAssignmentService.assignPendingTickets();
     }

@@ -1,6 +1,7 @@
 package com.fixora.maintainance.property.infrastructure.persistence.mapper;
 
 import com.fixora.maintainance.property.domain.model.Company;
+import com.fixora.maintainance.property.domain.model.CompanyType;
 
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ public class CompanyMapper {
                 .name(companyEntity.getName())
                 .address(companyEntity.getAddress())
                 .companyCode(companyEntity.getCompanyCode())
+                .type(companyEntity.getType() != null ? companyEntity.getType() : CompanyType.PROPERTY_MANAGEMENT)
                 .createdAt(companyEntity.getCreatedAt())
                 .userIds(companyEntity.getUsers() != null ? 
                     companyEntity.getUsers().stream()

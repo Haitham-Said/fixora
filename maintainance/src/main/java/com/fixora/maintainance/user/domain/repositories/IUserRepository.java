@@ -1,7 +1,6 @@
 package com.fixora.maintainance.user.domain.repositories;
 
 import com.fixora.maintainance.user.domain.model.Maintainer;
-import com.fixora.maintainance.user.domain.model.InactiveUser;
 import com.fixora.maintainance.user.domain.model.request.MaintainerRequest;
 import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 
@@ -17,10 +16,7 @@ public interface IUserRepository {
      com.fixora.maintainance.user.domain.model.User addUser(MaintainerRequest maintainerRequest);
      com.fixora.maintainance.user.domain.model.User addUser(String name, String email, String phone, String role, Long companyId);
      com.fixora.maintainance.user.domain.model.User addUserWithStatus(String name, String email, String phone, String role, Long companyId, String status);
-     
-     List<InactiveUser> findInactiveUsers();
-     InactiveUser findInactiveUserById(Long userId);
-     void activateUser(Long userId);
+
      Optional<com.fixora.maintainance.user.domain.model.User> findUserById(Long userId);
      void updatePassword(Long userId, String encodedPassword);
      void updatePhone(Long userId, String phone);

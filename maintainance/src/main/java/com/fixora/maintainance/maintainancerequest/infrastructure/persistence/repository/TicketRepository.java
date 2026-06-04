@@ -1,10 +1,18 @@
 package com.fixora.maintainance.maintainancerequest.infrastructure.persistence.repository;
 
-import com.fixora.maintainance.maintainancerequest.domain.model.*;
+import com.fixora.maintainance.maintainancerequest.application.assignment.MaintainerAssignmentService;
+import com.fixora.maintainance.maintainancerequest.application.visibility.TicketVisibilityService;
+import com.fixora.maintainance.maintainancerequest.domain.model.MaintenanceWorkflowRules;
+import com.fixora.maintainance.maintainancerequest.domain.model.PortalTicketQueue;
+import com.fixora.maintainance.maintainancerequest.domain.model.Ticket;
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketApprovalStatus;
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketPaymentPayerType;
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketPaymentStatus;
+import com.fixora.maintainance.maintainancerequest.domain.model.TicketStatus;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketQuery;
 import com.fixora.maintainance.maintainancerequest.domain.model.requests.TicketRequest;
+import com.fixora.maintainance.maintainancerequest.domain.model.routing.TicketRoutingDecision;
 import com.fixora.maintainance.maintainancerequest.domain.repository.ITicketRepository;
-import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.TicketAssignmentWorker;
 import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.entity.MaintainanceRequest;
 import com.fixora.maintainance.maintainancerequest.infrastructure.persistence.mapper.TicketMapper;
 import com.fixora.maintainance.user.infrastructure.entity.customer.Customer;
@@ -23,156 +31,258 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class TicketRepository implements ITicketRepository {
 
 
     private final TicketJpaRepository ticketJpaRepository;
-    private final TicketAssignmentWorker ticketAssignmentWorker;
+    private final MaintainerAssignmentService maintainerAssignmentService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public TicketRepository(TicketJpaRepository ticketJpaRepository, TicketAssignmentWorker ticketAssignmentWorker) {
+    public TicketRepository(TicketJpaRepository ticketJpaRepository,
+                            MaintainerAssignmentService maintainerAssignmentService) {
         this.ticketJpaRepository = ticketJpaRepository;
-        this.ticketAssignmentWorker = ticketAssignmentWorker;
+        this.maintainerAssignmentService = maintainerAssignmentService;
     }
 
     @Override
+    public Page<Ticket> loadPortalTickets(TicketQuery ticketQuery, TicketVisibilityService.PortalTicketScope scope) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<MaintainanceRequest> cq = cb.createQuery(MaintainanceRequest.class);
+        Root<MaintainanceRequest> root = cq.from(MaintainanceRequest.class);
+        List<Predicate> predicates = buildPortalPredicates(cb, root, ticketQuery, scope);
+        cq.where(predicates.toArray(new Predicate[0]));
+        cq.orderBy(cb.desc(root.get("updatedAt")));
+        TypedQuery<MaintainanceRequest> query = entityManager.createQuery(cq);
 
-    public Page<Ticket> loadCustomerTickets(TicketQuery ticketQuery) {
-        CriteriaBuilder criteriaBuilder=entityManager.getCriteriaBuilder();
-        CriteriaQuery<MaintainanceRequest> criteriaQuery=criteriaBuilder.createQuery(MaintainanceRequest.class);
-        Root<MaintainanceRequest> root=criteriaQuery.from(MaintainanceRequest.class);
-        List<Predicate> predicates=new ArrayList<>();
-
-        predicates.add(criteriaBuilder.equal(root.get("customer").get("user").get("id"), ticketQuery.getUserId()));
-        if(ticketQuery.getFilter().getTicketStatus()!=null) {
-            predicates.add(criteriaBuilder.equal(root.get("status"), ticketQuery.getFilter().getTicketStatus()));
-        }
-        if(ticketQuery.getFilter().getDateFrom()!=null){
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"),ticketQuery.getFilter().getDateFrom()));
-        }
-        if(ticketQuery.getFilter().getDateTo()!=null){
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"),ticketQuery.getFilter().getDateTo()));
-        }
-        if(ticketQuery.getFilter().getCompanyId()!=null){
-            predicates.add(criteriaBuilder.equal(root.get("company").get("id"),ticketQuery.getFilter().getCompanyId()));
-        }
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
-        criteriaQuery.orderBy(criteriaBuilder.desc(root.get("createdAt")));
-        TypedQuery<MaintainanceRequest> query= entityManager.createQuery(criteriaQuery);
-        
-        // Use domain pagination
-        var pagination = ticketQuery.getPagination() != null 
-            ? ticketQuery.getPagination() 
-            : com.fixora.maintainance.maintainancerequest.domain.model.PaginationRequest.builder().build();
-        
+        var pagination = ticketQuery.getPagination() != null
+                ? ticketQuery.getPagination()
+                : com.fixora.maintainance.maintainancerequest.domain.model.PaginationRequest.builder().build();
         query.setFirstResult(pagination.getOffset());
         query.setMaxResults(pagination.getPageSize());
-        List<MaintainanceRequest> result=query.getResultList();
-
-         List<Ticket> tickets=result.stream()
-                .map(TicketMapper::toTicket)
-                .toList();
-         
-         // Convert domain pagination to Spring Pageable for PageImpl
-         org.springframework.data.domain.Pageable pageable = 
-             org.springframework.data.domain.PageRequest.of(
-                 pagination.getPageNumber(), 
-                 pagination.getPageSize()
-             );
-         return new PageImpl<>(tickets, pageable, getTotalCount(ticketQuery));
+        List<Ticket> tickets = query.getResultList().stream().map(TicketMapper::toTicket).toList();
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                pagination.getPageNumber(), pagination.getPageSize());
+        return new PageImpl<>(tickets, pageable, countPortalTickets(ticketQuery, scope));
     }
 
-    private long getTotalCount(TicketQuery ticketQuery) {
+    private List<Predicate> buildPortalPredicates(
+            CriteriaBuilder cb, Root<MaintainanceRequest> root, TicketQuery ticketQuery,
+            TicketVisibilityService.PortalTicketScope scope) {
+        List<Predicate> predicates = new ArrayList<>();
+        PortalTicketQueue queue = ticketQuery.getFilter().getQueue();
+        if (queue == PortalTicketQueue.NEEDS_ESTIMATION) {
+            predicates.add(cb.equal(root.get("status"), TicketStatus.NEEDS_ESTIMATION));
+            if (!scope.operationAll()) {
+                Long companyId = ticketQuery.getFilter().getCompanyId();
+                if (companyId != null) {
+                    predicates.add(cb.equal(root.get("executorCompany").get("id"), companyId));
+                }
+                MaintenanceWorkflowRules.estimationActorForPortalRole(ticketQuery.getFilter().getRole())
+                        .ifPresent(actor -> predicates.add(cb.equal(root.get("ticketEstimationActor"), actor)));
+            }
+        } else {
+            if (!scope.operationAll()) {
+                if (scope.pmCompanyId() != null) {
+                    predicates.add(cb.equal(root.get("pmCompany").get("id"), scope.pmCompanyId()));
+                } else if (scope.fmCompanyId() != null) {
+                    Predicate exec = cb.equal(root.get("executorCompany").get("id"), scope.fmCompanyId());
+                    Predicate fm = cb.equal(root.get("facilityManagementCompany").get("id"), scope.fmCompanyId());
+                    predicates.add(cb.or(exec, fm));
+                }
+            }
+            if (ticketQuery.getFilter().getTicketStatus() != null) {
+                predicates.add(cb.equal(root.get("status"), ticketQuery.getFilter().getTicketStatus()));
+            }
+        }
+        if (ticketQuery.getFilter().getDateFrom() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("updatedAt"), ticketQuery.getFilter().getDateFrom()));
+        }
+        if (ticketQuery.getFilter().getDateTo() != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("updatedAt"), ticketQuery.getFilter().getDateTo()));
+        }
+        return predicates;
+    }
+
+    private long countPortalTickets(TicketQuery ticketQuery, TicketVisibilityService.PortalTicketScope scope) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<MaintainanceRequest> root = countQuery.from(MaintainanceRequest.class);
-
-        List<Predicate> predicates = new ArrayList<>();
-
-        predicates.add(cb.equal(root.get("customer").get("user").get("id"), ticketQuery.getUserId()));
-
-        if (ticketQuery.getFilter().getTicketStatus() != null) {
-            predicates.add(cb.equal(root.get("status"), ticketQuery.getFilter().getTicketStatus()));
-        }
-        if (ticketQuery.getFilter().getDateFrom() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), ticketQuery.getFilter().getDateFrom()));
-        }
-        if (ticketQuery.getFilter().getDateTo() != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), ticketQuery.getFilter().getDateTo()));
-        }
-        if (ticketQuery.getFilter().getCompanyId() != null) {
-            predicates.add(cb.equal(root.get("company").get("id"), ticketQuery.getFilter().getCompanyId()));
-        }
-
         countQuery.select(cb.count(root));
-        countQuery.where(predicates.toArray(new Predicate[0]));
-
+        countQuery.where(buildPortalPredicates(cb, root, ticketQuery, scope).toArray(new Predicate[0]));
         return entityManager.createQuery(countQuery).getSingleResult();
     }
 
     @Transactional
-    public Ticket createNewTicket(TicketRequest ticketRequest){
-        MaintainanceRequest maintainanceRequest=new MaintainanceRequest();
+    public Ticket createNewTicket(TicketRequest ticketRequest, TicketRoutingDecision routing) {
+        MaintainanceRequest maintainanceRequest = new MaintainanceRequest();
         maintainanceRequest.setDescription(ticketRequest.getDescription());
         maintainanceRequest.setPictureUrl(ticketRequest.getImageUrl());
-        maintainanceRequest.setStatus(TicketStatus.PENDING);
+
         Customer customer = entityManager.find(Customer.class, ticketRequest.getUserId());
-        Company company=entityManager.find(Company.class,ticketRequest.getCompanyId());
-        Apartment apartment=customer.getApartment();
-        Building building=apartment.getBuilding();
+        Company pmCompany = entityManager.find(Company.class, routing.pmCompanyId());
+        Company executorCompany = entityManager.find(Company.class, routing.executorCompanyId());
+        Company fmCompany = routing.facilityManagementCompanyId() != null
+                ? entityManager.find(Company.class, routing.facilityManagementCompanyId())
+                : null;
+        Apartment apartment = customer.getApartment();
+        Building building = apartment.getBuilding();
         maintainanceRequest.setApartment(apartment);
         maintainanceRequest.setCustomer(customer);
         maintainanceRequest.setBuilding(building);
-        maintainanceRequest.setCompany(company);
+        maintainanceRequest.setPmCompany(pmCompany);
+        maintainanceRequest.setExecutorCompany(executorCompany);
+        maintainanceRequest.setFacilityManagementCompany(fmCompany);
         maintainanceRequest.setPreferredTime(ticketRequest.getPreferredSlot().toString());
+        maintainanceRequest.setPreferredVisitDate(ticketRequest.getPreferredVisitDate());
+        maintainanceRequest.setStatus(routing.initialStatus());
+        maintainanceRequest.setTicketEstimationActor(routing.estimationActor());
+        maintainanceRequest.setTicketApprovalActor(routing.approvalActor());
+        maintainanceRequest.setApproved(false);
+        maintainanceRequest.setPaid(false);
+        maintainanceRequest.setTicketApprovalStatus(TicketApprovalStatus.NOT_REQUIRED);
+        maintainanceRequest.setTicketPaymentStatus(TicketPaymentStatus.NOT_REQUIRED);
+        maintainanceRequest.setPayerType(TicketPaymentPayerType.NONE);
 
         entityManager.persist(maintainanceRequest);
-
         return TicketMapper.toTicket(maintainanceRequest);
-
     }
 
     @Transactional
     public void assignUnassignedPendingTickets(){
-
-         ticketJpaRepository.findUnassignedPendingTickets().
-                forEach(ticketAssignmentWorker::assignSingleTicketSafely);
+         ticketJpaRepository.findUnassignedPendingTickets()
+                .forEach(r -> attemptAssignmentAndTrackOutcome(r, true));
 
     }
 
     @Override
     @Transactional
-    public Ticket updateTicketStatus(Long ticketId, TicketStatus newStatus, Long maintainerId) {
+    public boolean assignSinglePendingTicket(Long ticketId) {
+        MaintainanceRequest request = entityManager.find(MaintainanceRequest.class, ticketId);
+        if (request == null) {
+            return false;
+        }
+        if (request.getMaintainer() != null) {
+            return true;
+        }
+        if (request.getAssignmentRetryCount() != null && request.getAssignmentRetryCount() >= 3) {
+            return false;
+        }
+        if (!isAssignableQueueStatus(request.getStatus())) {
+            return false;
+        }
+
+        attemptAssignmentAndTrackOutcome(request, false);
+        return request.getMaintainer() != null;
+    }
+
+    /** Only this status is picked up by the assignment scheduler / single-assign path. */
+    private static boolean isAssignableQueueStatus(TicketStatus status) {
+        return status == TicketStatus.READY_TO_ASSIGN;
+    }
+
+    /**
+     * @param isolatedTransaction {@code true} for batch/scheduler (REQUIRES_NEW per ticket);
+     *                            {@code false} when the row may still be uncommitted (e.g. immediate assign after create).
+     */
+    private void attemptAssignmentAndTrackOutcome(MaintainanceRequest request, boolean isolatedTransaction) {
+        request.setLastAssignmentAttemptAt(LocalDateTime.now());
+        boolean assigned = isolatedTransaction
+                ? maintainerAssignmentService.assignSingleTicketSafely(request)
+                : maintainerAssignmentService.assignSingleTicketInCurrentTransaction(request);
+        // After REQUIRES_NEW the outer persistence context can be stale; same-tx assign already updates this instance.
+        if (isolatedTransaction) {
+            entityManager.refresh(request);
+        }
+
+        if (!assigned && request.getMaintainer() == null && isAssignableQueueStatus(request.getStatus())) {
+            int current = request.getAssignmentRetryCount() == null ? 0 : request.getAssignmentRetryCount();
+            int next = current + 1;
+            request.setAssignmentRetryCount(next);
+            if (next >= 3) {
+                request.setStatus(TicketStatus.MANUAL_ASSIGNMENT);
+            }
+            request.setUpdatedAt(LocalDateTime.now());
+            entityManager.merge(request);
+        }
+    }
+
+    @Override
+    public java.util.Optional<Ticket> findById(Long ticketId) {
+        MaintainanceRequest entity = entityManager.find(MaintainanceRequest.class, ticketId);
+        return entity != null ? java.util.Optional.of(TicketMapper.toTicket(entity)) : java.util.Optional.empty();
+    }
+
+    @Override
+    public List<Ticket> findMaintainerTicketsByStatus(Long maintainerUserId, TicketStatus status) {
+        return entityManager.createQuery("""
+                SELECT t FROM MaintainanceRequest t
+                WHERE t.maintainer IS NOT NULL
+                  AND t.maintainer.userId = :maintainerUserId
+                  AND t.status = :status
+                ORDER BY t.updatedAt DESC
+                """, MaintainanceRequest.class)
+                .setParameter("maintainerUserId", maintainerUserId)
+                .setParameter("status", status)
+                .getResultList()
+                .stream()
+                .map(TicketMapper::toTicket)
+                .toList();
+    }
+
+    @Override
+    public Optional<Ticket> findMaintainerTicketById(Long maintainerUserId, Long ticketId) {
+        MaintainanceRequest request = entityManager.find(MaintainanceRequest.class, ticketId);
+        if (request == null || request.getMaintainer() == null || !maintainerUserId.equals(request.getMaintainer().getUserId())) {
+            return Optional.empty();
+        }
+        return Optional.of(TicketMapper.toTicket(request));
+    }
+
+    @Override
+    @Transactional
+    public Ticket startTicketForMaintainer(Long ticketId, Long maintainerUserId) {
         MaintainanceRequest request = entityManager.find(MaintainanceRequest.class, ticketId);
         if (request == null) {
             throw new IllegalArgumentException("Ticket not found with ID: " + ticketId);
         }
-        
-        // Verify the maintainer is assigned to this ticket
-        if (request.getMaintainer() == null || !request.getMaintainer().getUserId().equals(maintainerId)) {
-            throw new IllegalArgumentException("Maintainer is not assigned to this ticket");
+        if (request.getMaintainer() == null || !maintainerUserId.equals(request.getMaintainer().getUserId())) {
+            throw new IllegalArgumentException("Ticket is not assigned to this maintainer");
         }
-        
-        // Validate status transition (only allow CLOSED or FIXED from ASSIGNED/IN_PROGRESS)
-        TicketStatus currentStatus = request.getStatus();
-        if (currentStatus != TicketStatus.ASSIGNED && currentStatus != TicketStatus.IN_PROGRESS) {
-            throw new IllegalArgumentException("Cannot update status from " + currentStatus + ". Ticket must be ASSIGNED or IN_PROGRESS.");
+        if (request.getStatus() != TicketStatus.ASSIGNED) {
+            throw new IllegalArgumentException("Ticket is no longer open for Start");
         }
-        
-        if (newStatus != TicketStatus.CLOSED && newStatus != TicketStatus.FIXED) {
-            throw new IllegalArgumentException("Maintainers can only set status to CLOSED or FIXED");
-        }
-        
-        request.setStatus(newStatus);
+
+        request.setStatus(TicketStatus.IN_PROGRESS);
         request.setUpdatedAt(java.time.LocalDateTime.now());
         entityManager.merge(request);
-        
+        return TicketMapper.toTicket(request);
+    }
+
+    @Override
+    @Transactional
+    public Ticket completeTicketForMaintainer(Long ticketId, Long maintainerUserId) {
+        MaintainanceRequest request = entityManager.find(MaintainanceRequest.class, ticketId);
+        if (request == null) {
+            throw new IllegalArgumentException("Ticket not found with ID: " + ticketId);
+        }
+        if (request.getMaintainer() == null || !maintainerUserId.equals(request.getMaintainer().getUserId())) {
+            throw new IllegalArgumentException("Ticket is not assigned to this maintainer");
+        }
+        if (request.getStatus() != TicketStatus.IN_PROGRESS) {
+            throw new IllegalArgumentException("Ticket must be IN_PROGRESS before completion");
+        }
+
+        request.setStatus(TicketStatus.COMPLETED);
+        request.setUpdatedAt(java.time.LocalDateTime.now());
+        entityManager.merge(request);
         return TicketMapper.toTicket(request);
     }
 

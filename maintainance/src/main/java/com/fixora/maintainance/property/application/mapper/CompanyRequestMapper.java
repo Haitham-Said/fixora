@@ -12,6 +12,7 @@ public class CompanyRequestMapper {
                 .phone(companyRequestDTO.phone())
                 .address(companyRequestDTO.address())
                 .companyCode(companyRequestDTO.companyCode())
+                .type(companyRequestDTO.type())
                 .build();
 
     }

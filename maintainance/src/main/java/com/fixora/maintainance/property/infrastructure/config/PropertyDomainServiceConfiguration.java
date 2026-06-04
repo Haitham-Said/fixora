@@ -9,8 +9,9 @@ import org.springframework.context.annotation.Configuration;
 public class PropertyDomainServiceConfiguration {
 
     @Bean
-    public CompanyService companyService(ICompanyRepository companyRepository) {
-        return new DefaultCompanyService(companyRepository);
+    public CompanyService companyService(ICompanyRepository companyRepository,
+                                         ICompanyWorkflowConfigRepository companyWorkflowConfigRepository) {
+        return new DefaultCompanyService(companyRepository, companyWorkflowConfigRepository);
     }
 
     @Bean

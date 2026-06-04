@@ -6,4 +6,6 @@ public class ErrorCodes {
     public static final String ERROR="Something Went Wrong";
     public static final String FORBIDDEN_ACCESS="ACCESS FORBIDDEN";
     public static final String BAD_REQUEST="BAD REQUEST";
+    public static final String WORKFLOW_CONFLICT="WORKFLOW STATE CONFLICT";
+    public static final String WORKFLOW_CONFIG_NOT_FOUND="WORKFLOW CONFIG NOT FOUND";
 }

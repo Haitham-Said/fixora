@@ -1,6 +1,7 @@
 package com.fixora.maintainance.user.infrastructure.storage;
 
 import com.fixora.maintainance.user.domain.service.IStorageService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -9,12 +10,11 @@ import java.util.UUID;
 /**
  * No-operation storage service implementation.
  * This is a placeholder that doesn't actually upload files.
- * 
- * NOTE: This is kept for development/testing. In production, use S3StorageService.
- * To switch to S3, remove @Service from this class and ensure S3StorageService
- * is the only implementation of IStorageService.
+ *
+ * Used for development/testing when S3 is disabled.
  */
-// @Service  // Commented out - use S3StorageService instead
+@Service
+@ConditionalOnProperty(prefix = "app.media", name = "storage-type", havingValue = "direct")
 public class NoOpStorageService implements IStorageService {
 
     @Override

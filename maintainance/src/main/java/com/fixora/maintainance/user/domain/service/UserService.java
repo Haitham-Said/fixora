@@ -1,13 +1,11 @@
 package com.fixora.maintainance.user.domain.service;
 
 import com.fixora.maintainance.user.domain.model.Customer;
-import com.fixora.maintainance.user.domain.model.InactiveUser;
 import com.fixora.maintainance.user.domain.model.Maintainer;
 import com.fixora.maintainance.user.domain.model.Role;
 import com.fixora.maintainance.user.domain.model.request.CustomerRequest;
 import com.fixora.maintainance.user.domain.model.request.CustomerRegistrationRequest;
 import com.fixora.maintainance.user.domain.model.request.MaintainerRequest;
-import com.fixora.maintainance.user.domain.model.request.UserActivationRequest;
 import com.fixora.maintainance.user.infrastructure.entity.UserEntity;
 import com.fixora.maintainance.user.domain.exception.UserNotFoundException;
 import com.fixora.maintainance.user.domain.repositories.IUserRepository;
@@ -22,6 +20,7 @@ import com.fixora.maintainance.user.domain.model.UserCode;
 import com.fixora.maintainance.property.domain.repository.IApartmentRepository;
 import com.fixora.maintainance.property.domain.service.BuildingService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import com.fixora.maintainance.user.domain.model.User;
 
 import java.time.LocalDateTime;
@@ -110,8 +109,35 @@ public class UserService implements IUserService {
         return customer;
     }
 
+    @Transactional
     public Customer registerCustomer(CustomerRegistrationRequest registrationRequest) {
-        // Validate apartment exists and belongs to the specified building and company
+        com.fixora.maintainance.property.domain.model.Apartment apartment =
+                validateApartmentAndCompany(registrationRequest);
+
+        // MVP: tenants are identified by WhatsApp phone; no email activation or one-time codes.
+        User user = userRepository.addUser(
+                registrationRequest.getName(),
+                registrationRequest.getEmail(),
+                registrationRequest.getPhone(),
+                Role.CUSTOMER.name(),
+                registrationRequest.getCompanyId()
+        );
+
+        Customer customer = customerRepository.addCustomer(user, apartment.getId(), null);
+
+        processRegistrationAttachments(registrationRequest, user.getId());
+
+        return customer;
+    }
+
+    /**
+     * Validates that the apartment exists and matches the provided building and company.
+     * Returns the apartment if validation succeeds.
+     */
+    private com.fixora.maintainance.property.domain.model.Apartment validateApartmentAndCompany(
+            CustomerRegistrationRequest registrationRequest) {
+
+        // Validate apartment exists
         com.fixora.maintainance.property.domain.model.Apartment apartment = 
                 apartmentRepository.findById(registrationRequest.getApartmentId());
         if (apartment == null) {
@@ -133,21 +159,17 @@ public class UserService implements IUserService {
             throw new IllegalArgumentException("Building does not belong to the specified company");
         }
 
-        // Create user with CUSTOMER role and INACTIVE status
-        User user = userRepository.addUserWithStatus(
-                registrationRequest.getName(),
-                registrationRequest.getEmail(),
-                registrationRequest.getPhone(),
-                Role.CUSTOMER.name(),
-                registrationRequest.getCompanyId(),
-                "INACTIVE" // Status set to INACTIVE for self-registration
-        );
+        return apartment;
+    }
 
-        // Create customer record
-        Customer customer = customerRepository.addCustomer(user, apartment.getId(), null);
+    /**
+     * Uploads and persists registration attachments for the given user (if any).
+     */
+    private void processRegistrationAttachments(CustomerRegistrationRequest registrationRequest, Long userId) {
+        if (registrationRequest.getAttachments() == null || registrationRequest.getAttachments().isEmpty()) {
+            return;
+        }
 
-        // Process and save attachments if provided
-        if (registrationRequest.getAttachments() != null && !registrationRequest.getAttachments().isEmpty()) {
             List<Attachment> attachments = registrationRequest.getAttachments().stream()
                     .map(attachmentRequest -> {
                         // Upload file to storage (returns URL)
@@ -159,7 +181,7 @@ public class UserService implements IUserService {
 
                         // Create attachment domain model
                         return Attachment.builder()
-                                .userId(user.getId())
+                            .userId(userId)
                                 .fileName(attachmentRequest.getFileName())
                                 .fileUrl(fileUrl)
                                 .fileType(attachmentRequest.getFileType())
@@ -169,31 +191,9 @@ public class UserService implements IUserService {
                     .collect(Collectors.toList());
 
             // Save attachments to database
-            attachmentRepository.saveAttachments(user.getId(), attachments);
-        }
-
-        // Generate activation code with INACTIVE status (pending admin approval)
-        generateAndSaveUserCode(user.getId(), "INACTIVE");
-
-        return customer;
+        attachmentRepository.saveAttachments(userId, attachments);
     }
 
-    public List<InactiveUser> getInactiveUsers() {
-        return userRepository.findInactiveUsers();
-    }
-
-    public InactiveUser getInactiveUserById(Long userId) {
-        return userRepository.findInactiveUserById(userId);
-    }
-
-    public void activateUser(UserActivationRequest activationRequest) {
-        // Update user status to ACTIVE (no password needed)
-        userRepository.activateUser(activationRequest.getUserId());
-        
-        // Generate or update activation code with ACTIVE status
-        generateAndSaveUserCode(activationRequest.getUserId(), "ACTIVE");
-    }
-    
     /**
      * Generates and saves a user code
      * @param userId The user ID

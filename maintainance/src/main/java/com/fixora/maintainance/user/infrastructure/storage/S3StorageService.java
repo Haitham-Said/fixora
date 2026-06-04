@@ -4,6 +4,7 @@ import com.fixora.maintainance.user.domain.service.IStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -23,6 +24,7 @@ import java.util.UUID;
  * - aws.secret-access-key (optional, can use IAM role)
  */
 @Service
+@ConditionalOnProperty(prefix = "app.media", name = "storage-type", havingValue = "s3", matchIfMissing = true)
 public class S3StorageService implements IStorageService {
 
     private static final Logger logger = LoggerFactory.getLogger(S3StorageService.class);

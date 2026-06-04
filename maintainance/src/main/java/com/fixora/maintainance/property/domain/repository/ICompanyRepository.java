@@ -7,5 +7,6 @@ public interface ICompanyRepository {
 
     Company addCompany(CompanyRequest companyRequest);
     Company findByCompanyCode(String companyCode);
+    java.util.Optional<Company> findById(long companyId);
 }
 

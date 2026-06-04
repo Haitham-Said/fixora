@@ -1,0 +1,16 @@
+package com.fixora.maintainance.whatsapp.domain.model;
+
+public enum ConversationState {
+    START,
+    CATEGORY,
+    DESCRIPTION,
+    MEDIA,
+    WAITING_FOR_PREFERRED_DATE,
+    WAITING_FOR_PREFERRED_TIMESLOT,
+    CREATED,
+    MAINTAINER_MENU,
+    MAINTAINER_VIEWING_OPEN_TICKETS,
+    MAINTAINER_VIEWING_IN_PROGRESS_TICKETS,
+    MAINTAINER_VIEWING_TICKET_ACTION
+}
+

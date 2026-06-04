@@ -21,6 +21,7 @@ public class TicketMapper {
                         .dateFrom(ticketQueryRequest.dateFrom())
                         .dateTo(ticketQueryRequest.dateTo())
                         .role(ticketQueryRequest.role())
+                        .queue(ticketQueryRequest.queue())
                         .build())
                 .requestId(ticketQueryRequest.requestId())
                 .pagination(PaginationMapper.toDomain(pageable))

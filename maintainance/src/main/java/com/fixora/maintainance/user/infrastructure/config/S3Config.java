@@ -1,6 +1,7 @@
 package com.fixora.maintainance.user.infrastructure.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -14,6 +15,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  * (IAM role, environment variables, etc.)
  */
 @Configuration
+@ConditionalOnProperty(prefix = "app.media", name = "storage-type", havingValue = "s3", matchIfMissing = true)
 public class S3Config {
 
     @Value("${aws.s3.region:us-east-1}")
@@ -27,7 +29,7 @@ public class S3Config {
 
     @Bean
     public S3Client s3Client() {
-        S3Client.Builder builder = S3Client.builder()
+        var builder = S3Client.builder()
                 .region(Region.of(region));
 
         // Only set credentials if provided (otherwise use default credential chain)

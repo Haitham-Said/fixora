@@ -25,6 +25,9 @@ public class CompanyRepository implements ICompanyRepository {
         company.setName(companyRequest.getName());
         company.setPhone(companyRequest.getPhone());
         company.setCompanyCode(companyRequest.getCompanyCode());
+        company.setType(companyRequest.getType() != null
+                ? companyRequest.getType()
+                : com.fixora.maintainance.property.domain.model.CompanyType.PROPERTY_MANAGEMENT);
         companyJPARepository.save(company);
         return CompanyMapper.toDomain(company);
     }
@@ -36,6 +39,11 @@ public class CompanyRepository implements ICompanyRepository {
             return null;
         }
         return CompanyMapper.toDomain(companyEntity);
+    }
+
+    @Override
+    public java.util.Optional<Company> findById(long companyId) {
+        return companyJPARepository.findById(companyId).map(CompanyMapper::toDomain);
     }
 }
 
